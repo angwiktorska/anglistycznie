@@ -11,8 +11,8 @@
    ===================================================================== */
 window.STRONA = {
   email:        "",   // np. "kontakt@anglistycznie.com" – pokaże się w Kontakcie
-  facebook:     "",   // pełny link, np. "https://www.facebook.com/anglistycznie"
-  instagram:    "",   // pełny link, np. "https://www.instagram.com/anglistycznie"
+  facebook:     "https://www.facebook.com/Anglistycznie",   // pełny link, np. "https://www.facebook.com/anglistycznie"
+  instagram:    "https://www.instagram.com/anglistycznie/",   // pełny link, np. "https://www.instagram.com/anglistycznie"
   strefaUcznia: "",   // link do aplikacji Zadanko English, np. "https://login.github.io/angielski/"
   formularz:    true, // formularz kontaktowy (działa, gdy wpiszesz e-mail powyżej)
   regulamin:    "",   // link do regulaminu sklepu (np. "pliki/regulamin.pdf")
@@ -136,6 +136,8 @@ nav.main a.on{background:var(--blush)}
 .icon-btn{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);display:grid;place-items:center;cursor:pointer;flex:none}
 .icon-btn:hover{border-color:var(--ink)}
 .icon-btn svg{width:20px;height:20px}
+a.icon-btn{color:var(--ink);text-decoration:none}
+a.icon-btn:hover{background:var(--blush-2)}
 .burger{display:none}
 @media (max-width:900px){
   nav.main{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch;background:var(--paper);border-bottom:1px solid var(--line);padding:10px max(20px,env(safe-area-inset-left,0px)) 18px}
@@ -143,6 +145,8 @@ nav.main a.on{background:var(--blush)}
   nav.main a{font-size:18px;padding:12px 14px}
   .burger{display:grid}
   .icon-btn[data-a="search"]{margin-left:auto}
+  .hs-first~.icon-btn[data-a="search"]{margin-left:0}
+  .hs-first{margin-left:auto}
   .logo img{height:46px}
 }
 
@@ -472,6 +476,8 @@ function shell(route,body){
   var o=W[0]?'<div class="ann">Nowe na blogu: <a href="#wpis-'+esc(W[0].slug)+'">'+esc(W[0].tytul)+'</a></div>':'';
   o+='<header class="top"><div class="wrap"><a class="logo" href="#" aria-label="Anglistycznie z Angie – strona główna"><img src="img/logo.png" alt="Anglistycznie z Angie"></a>'+
     '<nav class="main" id="nav">'+NAV.map(function(n){return '<a href="#'+n[0]+'"'+(sec===n[0]||(n[0]===''&&sec==='')?' class="on"':'')+'>'+n[1]+'</a>';}).join('')+(S.strefaUcznia?'<a class="btn sm red" href="'+esc(S.strefaUcznia)+'" style="margin-left:6px">Strefa ucznia</a>':'')+'</nav>'+
+    (S.facebook?'<a class="icon-btn hs-first" href="'+esc(S.facebook)+'" target="_blank" rel="noopener" aria-label="Facebook">'+ICON.fb+'</a>':'')+
+    (S.instagram?'<a class="icon-btn'+(S.facebook?'':' hs-first')+'" href="'+esc(S.instagram)+'" target="_blank" rel="noopener" aria-label="Instagram">'+ICON.ig+'</a>':'')+
     '<button class="icon-btn" data-a="search" aria-label="Szukaj">'+ICON.search+'</button><button class="icon-btn burger" data-a="menu" aria-label="Menu" aria-controls="nav" aria-expanded="false">'+ICON.menu+'</button></div></header>';
   o+='<main>'+body+'</main>';
   o+=BUS+'<footer><div class="wrap"><div class="cols"><div style="display:flex;flex-direction:column;gap:18px"><img src="img/logo-jasne.png" alt="Anglistycznie z Angie" style="width:200px">'+social()+'</div>'+
