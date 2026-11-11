@@ -1,0 +1,573 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Anglistycznie Premium</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Karty pracy, gry i pomysły na lekcje angielskiego od Angeliki – lektorki angielskiego. Darmowe materiały, blog i sklep z paczkami PDF.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:ital,wght@0,400;0,600;0,800;1,400&family=Caveat:wght@600;700&display=swap">
+<script>
+/* =====================================================================
+   TREŚCI STRONY – wszystko, co zmieniasz, jest tutaj.
+   Puste "" = element się nie pokazuje (np. brak Facebooka → brak ikonki).
+   ===================================================================== */
+window.STRONA = {
+  email:        "",   // np. "kontakt@anglistycznie.com" – pokaże się w Kontakcie
+  facebook:     "",   // pełny link, np. "https://www.facebook.com/anglistycznie"
+  instagram:    "",   // pełny link, np. "https://www.instagram.com/anglistycznie"
+  strefaUcznia: "",   // link do aplikacji Zadanko English, np. "https://login.github.io/angielski/"
+  formularz:    true, // formularz kontaktowy (działa, gdy wpiszesz e-mail powyżej)
+  regulamin:    "",   // link do regulaminu sklepu (np. "pliki/regulamin.pdf")
+  polityka:     "",   // link do polityki prywatności
+  stopka:       "Fundacja Rozwoju Przedsiębiorczości „Twój StartUp”",
+  sklepInfo:    "Paczki to pliki PDF do wydruku – kupujesz raz i używasz na wszystkich lekcjach."
+};
+
+/* O mnie */
+window.O_MNIE = [
+  "Hej! Nazywam się Angelika i jestem lektorką języka angielskiego. Uczę angielskiego od 6 lat i traktuję to jako najlepszą przygodę w moim życiu.",
+  "Zapraszam Cię więc do wspólnego rozwoju, bo nic tak nie cieszy jak dobre towarzystwo."
+];
+
+/* BLOG – najnowszy wpis na górze. data: "RRRR-MM-DD" albo "RRRR-MM".
+   tresc: akapity oddzielone pustą linią. okladka: plik w folderze img (albo pusto).
+   material: plik do pobrania pod wpisem (albo pusto). */
+window.WPISY = [
+  {
+    slug: "farm-animals-pisanie",
+    tytul: "Farm animals – poćwiczmy pisanie!",
+    data: "2024-03-07",
+    kategorie: ["farm animals", "animals", "writing", "beginners"],
+    okladka: "img/farm-animals.jpg",
+    zajawka: "Hej! Tak jak obiecałam, przychodzę z nowymi materiałami do tematu Farm animals. Tym razem mam coś na pisanie.",
+    tresc: "",
+    material: { tytul: "Farm Animals – writing practice", plik: "" }
+  },
+  {
+    slug: "wh-questions-dla-poczatkujacych",
+    tytul: "Wh-questions dla początkujących",
+    data: "2023-11",
+    kategorie: ["wh-questions", "questions", "beginners", "teens"],
+    okladka: "", kolor: "#C9DDF2",
+    zajawka: "Hej, u mnie w tym roku trochę więcej materiałów dla starszych klas. Ku mojemu ciągłemu zdziwieniu moi uczniowie dorastają szybciej, niż się spodziewam.",
+    tresc: "",
+    material: null
+  },
+  {
+    slug: "food-quantifiers",
+    tytul: "Food quantifiers",
+    data: "2023-11",
+    kategorie: ["food", "quantifiers", "countable", "uncountable", "a few", "a little"],
+    okladka: "", kolor: "#FBE0B8",
+    zajawka: "Hej :) Jak Ci mija końcówka października? Czy już z wytęsknieniem wyczekujesz przerwy świątecznej?",
+    tresc: "",
+    material: null
+  }
+];
+
+/* DARMOWE MATERIAŁY – plik: wrzuć PDF do folderu "materialy" i wpisz jego nazwę */
+window.MATERIALY = [
+  { tytul: "Tenses revision", dzial: "Gramatyka", opis: "Powtórka czasów w jednym miejscu – do druku.", plik: "materialy/tenses-revision.pdf", okladka: "", kolor: "#F6D5E0" }
+];
+
+/* SKLEP – link: adres strony płatności (Payhip, Stripe, Gumroad…). Bez linku przycisk prowadzi do Kontaktu. */
+window.PRODUKTY = [
+  { tytul: "Wild Animals Mega Pack", cena: "25 zł", opis: "Duża paczka materiałów o dzikich zwierzętach.", link: "", okladka: "", kolor: "#D9E8C8" }
+];
+
+/* KARTKÓWKA NA STRONIE GŁÓWNEJ – "___" to miejsce na odpowiedź, dobra: numer poprawnej odpowiedzi (liczony od 0).
+   Pusta lista [] = sekcja znika. */
+window.KARTKOWKA = [
+  { temat: "farm animals", pytanie: "A baby cow is called a ___.",        odp: ["calf", "lamb", "kid"],        dobra: 0 },
+  { temat: "quantifiers",  pytanie: "There is ___ milk in the fridge.",   odp: ["a few", "a little", "many"],  dobra: 1 },
+  { temat: "wh-questions", pytanie: "___ do you live? In Łódź.",          odp: ["When", "Who", "Where"],       dobra: 2 }
+];
+</script>
+<style>
+/* Layout: blush paper, plum ink, London-bus red as the one loud accent. Wide editorial column (1160px), cards as printed worksheets. */
+:root{
+  --paper:#FFF8FA; --card:#FFFFFF; --ink:#2F2729; --muted:#76666B; --line:#FFC9D7;
+  --blush:#FFBCCD; --blush-2:#FFC9D7; --rose:#C29BA6; --plum:#2F2729; --bus:#FC809F; --bus-ink:#D9456F; --on-bus:#2F2729;
+  --f-display:"Young Serif",Georgia,"Times New Roman",serif;
+  --f-body:"Figtree","Segoe UI",system-ui,sans-serif;
+  --f-hand:"Caveat","Comic Sans MS",cursive;
+  --r:18px; color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6}
+img{max-width:100%;display:block}
+a{color:inherit}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--bus);outline-offset:3px;border-radius:6px}
+[hidden]{display:none!important}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;line-height:1.12;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(36px,5.6vw,64px)}
+h2{font-size:clamp(28px,3.6vw,40px)}
+h3{font-size:22px}
+p{margin:0}
+.hand{font-family:var(--f-hand);font-weight:700;color:var(--bus);line-height:1}
+.lead{font-size:19px;color:var(--muted);max-width:56ch}
+.eyebrow{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--rose)}
+.btn{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--ink);background:var(--card);color:var(--ink);border-radius:999px;padding:11px 22px;font-weight:800;font-size:16px;text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--ink)}
+.btn.red{background:var(--bus);border-color:var(--bus);color:var(--on-bus)}
+.btn.red:hover{box-shadow:0 4px 0 #D9456F}
+.btn.ghost{border-color:transparent;background:none;padding-inline:6px}
+.btn.ghost:hover{box-shadow:none;transform:none;text-decoration:underline}
+.btn.sm{padding:7px 14px;font-size:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:3px 12px;font-size:14px;text-decoration:none;color:var(--muted);cursor:pointer}
+.tag:hover,.tag.on{border-color:var(--ink);color:var(--ink)}
+.tag.on{background:var(--blush)}
+section{padding-block:72px}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.sec-head>div{display:flex;flex-direction:column;gap:6px}
+
+/* announcement + header */
+.ann{background:var(--plum);color:#fff;font-size:14px;text-align:center;padding:8px 16px;padding-top:calc(8px + env(safe-area-inset-top,0px))}
+.ann a{color:var(--blush);font-weight:600}
+header.top{position:sticky;top:0;z-index:20;background:rgb(255 248 250 / .92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:20px;padding-block:10px}
+.logo img{height:56px;width:auto}
+nav.main{display:flex;gap:4px;margin-left:auto;align-items:center}
+nav.main a{text-decoration:none;font-weight:600;padding:8px 12px;border-radius:999px;font-size:15px}
+nav.main a:hover{background:var(--blush-2)}
+nav.main a.on{background:var(--blush)}
+.icon-btn{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);display:grid;place-items:center;cursor:pointer;flex:none}
+.icon-btn:hover{border-color:var(--ink)}
+.icon-btn svg{width:20px;height:20px}
+.burger{display:none}
+@media (max-width:900px){
+  nav.main{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch;background:var(--paper);border-bottom:1px solid var(--line);padding:10px max(20px,env(safe-area-inset-left,0px)) 18px}
+  nav.main.open{display:flex}
+  nav.main a{font-size:18px;padding:12px 14px}
+  .burger{display:grid}
+  .icon-btn[data-a="search"]{margin-left:auto}
+  .logo img{height:46px}
+}
+
+/* hero */
+.hero{padding-block:56px 72px;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center}
+.hero-text{display:flex;flex-direction:column;gap:22px}
+.hero .hand{font-size:44px;transform:rotate(-4deg);display:inline-block}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 60%,var(--blush) 60%,var(--blush) 92%,transparent 92%)}
+.desk{position:relative;aspect-ratio:1/0.92;max-width:100%}
+.sheet{position:absolute;background:var(--card);border-radius:10px;box-shadow:0 18px 40px -18px rgb(47 39 41 / .45),0 2px 0 var(--line);overflow:hidden}
+.sheet.s1{width:62%;left:4%;top:12%;transform:rotate(-7deg);z-index:1}
+.sheet.s2{width:58%;right:2%;top:2%;transform:rotate(6deg);z-index:2}
+.sheet.s3{width:66%;left:20%;bottom:0;transform:rotate(-1.5deg);z-index:3}
+.tape{position:absolute;width:90px;height:26px;background:rgb(244 198 210 / .85);top:-10px;left:50%;transform:translateX(-50%) rotate(-3deg);z-index:4}
+.stamp{position:absolute;right:4%;bottom:12%;z-index:5;width:96px;height:96px;border-radius:50%;background:var(--bus);color:var(--ink);display:grid;place-items:center;text-align:center;font-family:var(--f-hand);font-size:26px;line-height:.95;transform:rotate(10deg);box-shadow:0 8px 20px -8px rgb(0 0 0 / .4)}
+@media (prefers-reduced-motion:no-preference){
+  .sheet,.stamp{animation:drop .8s cubic-bezier(.2,.9,.3,1.2) both}
+  .sheet.s2{animation-delay:.12s}.sheet.s3{animation-delay:.24s}.stamp{animation-delay:.5s}
+  @keyframes drop{from{opacity:0;translate:0 -30px}to{opacity:1;translate:0 0}}
+}
+@media (max-width:860px){.hero .wrap{grid-template-columns:1fr}.desk{max-width:520px;width:100%;margin:0 auto}}
+
+/* generated cover */
+.cv{aspect-ratio:4/3;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:16px;overflow:hidden}
+.cv b{font-family:var(--f-hand);font-size:clamp(30px,4vw,44px);line-height:.95;color:var(--ink);position:relative;z-index:1}
+.cv small{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);opacity:.7;margin-top:8px;position:relative;z-index:1}
+.cv::before{content:"";position:absolute;inset:10px;border:2px dashed rgb(47 39 41 / .22);border-radius:8px}
+.cv::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;background:repeating-linear-gradient(transparent 0 15px,rgb(47 39 41 / .12) 15px 16px)}
+.cover-img{aspect-ratio:4/3;object-fit:cover;width:100%}
+
+/* cards */
+.grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:transform .18s,box-shadow .18s,border-color .18s;min-width:0}
+a.card:hover,.card.hov:hover{transform:translateY(-4px) rotate(-.4deg);box-shadow:0 14px 30px -16px rgb(47 39 41 / .45);border-color:var(--rose)}
+.card .body{padding:18px 20px 22px;display:flex;flex-direction:column;gap:10px;flex:1}
+.card .meta{font-size:14px;color:var(--muted)}
+.card .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:6px;flex-wrap:wrap}
+.price{font-family:var(--f-display);font-size:26px}
+.more{font-weight:800;color:var(--bus-ink);font-size:15px}
+
+/* bands */
+.band-blush{background:var(--blush-2)}
+.band-dark{background:var(--plum);color:#fff}
+.band-dark .lead{color:#E4D3D8}
+.band-dark .eyebrow{color:var(--blush)}
+.split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+@media (max-width:760px){.split{grid-template-columns:1fr}}
+.panel{border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.panel.free{background:var(--card);border:1.5px solid var(--line)}
+.panel.shop{background:var(--blush)}
+.mini{display:flex;gap:14px;align-items:center;background:var(--card);border-radius:14px;padding:10px;text-decoration:none;border:1.5px solid var(--line)}
+.mini .th{width:84px;flex:none;border-radius:8px;overflow:hidden}
+.mini .th .cv{padding:4px}.mini .th .cv b{font-size:16px}.mini .th .cv small{display:none}.mini .th .cv::before{inset:4px}
+.mini>div:last-child{min-width:0}
+.student{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:40px;align-items:center}
+.student .bus{font-size:0}
+.student .mock{background:#fff;color:var(--ink);border-radius:18px;padding:22px;transform:rotate(2deg);box-shadow:0 20px 40px -20px #000}
+.student .mock .q{font-size:19px;line-height:2}
+.student .mock .gap{display:inline-block;min-width:90px;border-bottom:2px solid #2C55E0;background:#E6ECFD;border-radius:6px 6px 0 0;text-align:center;font-weight:700;padding:0 8px}
+.student .mock .pen{font-family:var(--f-hand);color:var(--bus);font-size:28px}
+@media (max-width:760px){.student{grid-template-columns:1fr}}
+.about{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:48px;align-items:center}
+.about .portrait{background:var(--blush);border-radius:50% 50% 24px 24px;aspect-ratio:4/5;display:grid;place-items:center;position:relative;overflow:hidden}
+.about .portrait img{width:78%;height:auto}
+.about blockquote{margin:0;font-family:var(--f-display);font-size:clamp(22px,2.6vw,30px);line-height:1.35}
+.about .sig{font-family:var(--f-hand);font-size:46px;color:var(--bus);transform:rotate(-3deg);display:inline-block}
+@media (max-width:760px){.about{grid-template-columns:1fr}.about .portrait{max-width:320px}}
+.social{display:flex;gap:12px;flex-wrap:wrap}
+.soc{display:inline-flex;align-items:center;gap:10px;border-radius:999px;padding:10px 18px;text-decoration:none;font-weight:800;background:var(--card);border:2px solid var(--ink)}
+.soc svg{width:22px;height:22px}
+.soc:hover{background:var(--ink);color:#fff}
+
+/* page head */
+.phead{padding-block:56px 8px;display:flex;flex-direction:column;gap:12px}
+.phead .hand{font-size:34px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+.blog-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:40px;align-items:start}
+.side{display:flex;flex-direction:column;gap:28px;position:sticky;top:100px}
+.side h3{font-size:20px;margin-bottom:10px}
+.arch a{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);text-decoration:none}
+.arch a:hover{color:var(--bus)}
+@media (max-width:900px){.blog-layout{grid-template-columns:1fr}.side{position:static}}
+.postlist{display:flex;flex-direction:column;gap:22px}
+.prow{display:grid;grid-template-columns:260px minmax(0,1fr);background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);overflow:hidden;text-decoration:none;transition:transform .18s,box-shadow .18s}
+.prow:hover{transform:translateY(-3px);box-shadow:0 14px 30px -18px rgb(47 39 41 / .45)}
+.prow .body{padding:22px 26px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.prow h3{font-size:26px}
+@media (max-width:640px){.prow{grid-template-columns:1fr}}
+article.post{max-width:720px;margin:0 auto;padding-block:48px 72px;display:flex;flex-direction:column;gap:22px}
+article.post .cover{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+article.post .text p{margin-bottom:1.1em;font-size:19px;line-height:1.75}
+.dl{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--blush-2);border:2px dashed var(--rose);border-radius:var(--r);padding:20px 22px}
+.empty{border:2px dashed var(--line);border-radius:var(--r);padding:36px;text-align:center;color:var(--muted)}
+.contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:40px;align-items:start}
+@media (max-width:760px){.contact{grid-template-columns:1fr}}
+.form{background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);padding:26px;display:flex;flex-direction:column;gap:14px}
+.form label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:15px}
+.form input,.form textarea{border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--paper)}
+.form input:focus,.form textarea:focus{outline:none;border-color:var(--ink)}
+.mail{font-family:var(--f-display);font-size:clamp(20px,2.4vw,28px);word-break:break-all}
+/* search */
+.search{position:fixed;inset:0;z-index:50;background:rgb(47 39 41 / .55);display:flex;justify-content:center;align-items:flex-start;padding:calc(70px + env(safe-area-inset-top,0px)) 16px 16px}
+.search .box{background:var(--paper);width:min(680px,100%);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:12px;max-height:80vh;overflow:auto}
+.search input{width:100%;border:2px solid var(--ink);border-radius:999px;padding:12px 18px;font-size:18px;background:var(--card)}
+.sres a{display:flex;gap:12px;align-items:center;padding:10px;border-radius:12px;text-decoration:none}
+.sres a:hover{background:var(--blush-2)}
+.sres .k{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--rose);min-width:84px}
+/* footer */
+footer{background:var(--plum);color:#E9DDE0;padding-block:56px 32px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px))}
+footer .cols{display:grid;grid-template-columns:1.2fr 1fr;gap:36px}
+footer h4{font-family:var(--f-display);font-weight:400;font-size:20px;margin:0 0 12px;color:#fff}
+footer a{color:#E9DDE0;text-decoration:none}
+footer a:hover{color:#fff;text-decoration:underline}
+footer ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+footer .legal{border-top:1px solid rgb(255 255 255 / .15);margin-top:36px;padding-top:20px;font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#BFAFB4}
+footer .soc{background:transparent;border-color:#E9DDE0;color:#E9DDE0}
+footer .soc:hover{background:#fff;color:var(--ink)}
+@media (max-width:760px){footer .cols{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+
+/* ===== warstwa premium ===== */
+::selection{background:var(--blush)}
+main{animation:fadein .4s ease-out}
+@keyframes fadein{from{opacity:0}}
+h1{font-size:clamp(40px,6.6vw,86px);line-height:1.02;letter-spacing:-.02em}
+h2{font-size:clamp(30px,4.2vw,52px)}
+section{padding-block:clamp(64px,9vw,104px)}
+.lead{font-size:clamp(18px,1.5vw,21px)}
+.btn.lg{padding:14px 28px;font-size:17px}
+.hero{padding-block:clamp(40px,6vw,84px) clamp(48px,6vw,88px)}
+.hero .hand{font-size:54px}
+.pen-u{position:relative;white-space:nowrap}
+.pen-u svg{position:absolute;left:-3%;width:106%;bottom:-.02em;height:.18em;overflow:visible}
+.hero h1{line-height:1.18}
+.pen-u path{fill:none;stroke:var(--bus);stroke-width:5px;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s .6s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.rot{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;font-weight:600;color:var(--muted);min-height:48px}
+#rot{font-size:42px;display:inline-block;transform:rotate(-2deg)}
+#rot.swap{animation:swap .45s cubic-bezier(.2,.8,.3,1.2) both}
+@keyframes swap{from{opacity:0;translate:0 14px}}
+.desk{transform:perspective(1000px) rotateY(calc(var(--mx,0)*9deg)) rotateX(calc(var(--my,0)*-7deg));transition:transform .25s ease-out}
+.sheet{box-shadow:0 30px 60px -28px rgb(47 39 41 / .55),0 2px 0 var(--line)}
+.card{border-radius:14px;box-shadow:0 26px 44px -38px rgb(47 39 41 / .55)}
+.price{position:relative;padding:2px 14px}
+.price::after{content:"";position:absolute;inset:-3px -2px;border:2.5px solid var(--bus);border-radius:50%;transform:rotate(-5deg)}
+.about blockquote{font-size:clamp(24px,3vw,36px);line-height:1.3}
+.about .portrait img{width:min(66%,216px);background:#fff;padding:20px 16px;border-radius:14px;transform:rotate(-4deg);box-shadow:0 22px 34px -22px rgb(47 39 41 / .55)}
+.about .portrait::before{content:"Hello!";position:absolute;top:15%;left:0;right:0;text-align:center;font-family:var(--f-hand);font-weight:700;font-size:clamp(44px,6vw,64px);line-height:1;color:var(--bus);transform:rotate(-6deg)}
+.about .portrait{place-items:center;padding-top:18%}
+
+/* czerwona taśma z tematami */
+.strip-w{overflow:hidden;padding-block:16px 10px}
+.strip{background:var(--bus);transform:rotate(-1.2deg);margin-inline:-24px;padding:13px 0}
+.track{display:flex;width:max-content;animation:slide 40s linear infinite}
+.strip:hover .track{animation-play-state:paused}
+.track a{position:relative;color:var(--ink);text-decoration:none;font-family:var(--f-display);font-size:22px;padding:0 24px;white-space:nowrap}
+.track a::after{content:"";position:absolute;right:-4px;top:52%;width:7px;height:7px;border-radius:50%;background:#fff}
+.track a:hover{text-decoration:underline}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* kartkówka */
+.quiz-sec{background:var(--blush-2)}
+.quiz{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(28px,5vw,64px);align-items:center}
+.qtext{display:flex;flex-direction:column;gap:14px}
+@media (max-width:820px){.quiz{grid-template-columns:1fr}}
+.qsheet{position:relative;min-height:330px;padding:26px 24px 22px 58px;border-radius:6px;transform:rotate(-1.2deg);box-shadow:0 34px 60px -34px rgb(47 39 41 / .6),0 1px 0 var(--line);
+  background:linear-gradient(90deg,transparent 42px,#f1b3c2 42px,#f1b3c2 43.5px,transparent 43.5px),repeating-linear-gradient(#fff 0 33px,#e6edf8 33px 34px)}
+.qsheet::before{content:"";position:absolute;left:13px;top:0;bottom:0;width:16px;background:radial-gradient(circle,var(--blush-2) 0 7px,transparent 8px) 0 34px/16px 96px repeat-y}
+.qhead{display:flex;justify-content:space-between;gap:10px 20px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin-bottom:14px}
+.qhead i{font-family:var(--f-hand);font-style:normal;font-size:24px;line-height:1;color:#2C55E0;border-bottom:1.5px dotted var(--muted);padding:0 12px}
+.qno{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--rose)}
+.qq{font-family:var(--f-display);font-size:clamp(22px,2.7vw,32px);line-height:1.55;margin:10px 0 20px}
+.gap{display:inline-block;min-width:112px;border-bottom:2.5px solid var(--ink);text-align:center;font-family:var(--f-hand);font-size:1.3em;line-height:.9;padding:0 8px;color:#2C55E0}
+.gap.bad{color:var(--bus)}
+.gap.bad s{color:#2C55E0;text-decoration-color:var(--bus);text-decoration-thickness:3px}
+.qopts{display:flex;gap:10px;flex-wrap:wrap}
+.qopts .btn{font-size:17px;padding:9px 20px}
+.qopts .btn:disabled{cursor:default;transform:none;box-shadow:none;opacity:.55}
+.qopts .btn.right{opacity:1;background:#E3F4E6;border-color:#2C7A3F;color:#1D5A2C}
+.qopts .btn.wrong{opacity:1;border-color:var(--bus-ink);color:var(--bus-ink);text-decoration:line-through}
+.qfoot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:20px;min-height:48px}
+.qfb{font-size:38px;transform:rotate(-3deg);display:inline-block;animation:swap .4s cubic-bezier(.2,.8,.3,1.3) both}
+.qres{display:grid;gap:16px;justify-items:center;text-align:center;padding:14px 0}
+.grade{font-family:var(--f-hand);font-weight:700;font-size:88px;line-height:1;color:var(--bus);padding:8px 30px 14px;border:4px solid var(--bus);border-radius:50%;transform:rotate(-6deg);display:inline-block;animation:swap .5s cubic-bezier(.2,.8,.3,1.3) both}
+
+/* autobus przed stopką */
+.road{position:relative;height:128px;overflow:hidden}
+.road::after{content:"";position:absolute;left:0;right:0;bottom:12px;border-bottom:3px dashed var(--rose)}
+.road .bus{position:absolute;bottom:6px;right:max(24px,6vw);width:172px;transform:translateX(-120vw)}
+.road .wh{transform-box:fill-box;transform-origin:center}
+.road.go .wh{animation:spin .55s linear 6}
+@keyframes spin{to{transform:rotate(360deg)}}
+.road.parked .bus{transform:none}
+.road.go .bus{animation:drive 3.4s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes drive{to{transform:none}}
+.road .bye{position:absolute;right:calc(max(24px,6vw) + 188px);bottom:48px;font-size:36px;opacity:0;transform:rotate(-4deg);transition:opacity .5s 3.1s}
+.road.go .bye,.road.parked .bye{opacity:1}
+@media (prefers-reduced-motion:reduce){.pen-u path{stroke-dashoffset:0}.road .bus{transform:none}.road .bye{opacity:1}}
+</style>
+<div id="app"></div>
+<script>
+(function(){
+"use strict";
+var S=window.STRONA, W=window.WPISY||[], M=window.MATERIALY||[], P=window.PRODUKTY||[];
+var app=document.getElementById('app');
+var MIES=['styczeń','luty','marzec','kwiecień','maj','czerwiec','lipiec','sierpień','wrzesień','październik','listopad','grudzień'];
+var MIES_D=['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'];
+var ICON={
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  menu:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
+  fb:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.3H7.4V14h2.7v8h3.4z"/></svg>',
+  ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none"/></svg>',
+  dl:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>'
+};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function slug(s){return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ł/g,'l').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+function fdate(d){var p=String(d||'').split('-');if(p.length<2)return '';var m=+p[1]-1;return p[2]?(+p[2])+' '+MIES_D[m]+' '+p[0]:MIES[m]+' '+p[0];}
+function cover(it,cls){
+  if(it.okladka)return '<img class="cover-img'+(cls?' '+cls:'')+'" src="'+esc(it.okladka)+'" alt="'+esc(it.tytul)+'" loading="lazy">';
+  var words=it.tytul.split(/\s[–-]\s/)[0];
+  return '<div class="cv'+(cls?' '+cls:'')+'" style="background:'+esc(it.kolor||'#F6D5E0')+'"><b>'+esc(words)+'</b><small>Anglistycznie</small></div>';
+}
+function social(cls){
+  var o='';
+  if(S.facebook)o+='<a class="soc" href="'+esc(S.facebook)+'" target="_blank" rel="noopener">'+ICON.fb+'Facebook</a>';
+  if(S.instagram)o+='<a class="soc" href="'+esc(S.instagram)+'" target="_blank" rel="noopener">'+ICON.ig+'Instagram</a>';
+  return o?'<div class="social '+(cls||'')+'">'+o+'</div>':'';
+}
+function postCard(w){
+  return '<a class="card" href="#wpis-'+esc(w.slug)+'">'+cover(w)+'<div class="body"><span class="meta">'+fdate(w.data)+'</span><h3>'+esc(w.tytul)+'</h3><p class="meta" style="font-size:16px">'+esc(w.zajawka)+'</p><div class="foot"><span class="more">Czytaj dalej →</span></div></div></a>';
+}
+function matCard(m){
+  return '<div class="card hov">'+cover(m)+'<div class="body"><span class="eyebrow">'+esc(m.dzial||'Materiał')+'</span><h3>'+esc(m.tytul)+'</h3>'+(m.opis?'<p class="meta" style="font-size:16px">'+esc(m.opis)+'</p>':'')+'<div class="foot"><span class="meta">PDF · za darmo</span>'+(m.plik?'<a class="btn sm red" href="'+esc(m.plik)+'" download>'+ICON.dl+'Pobierz</a>':'')+'</div></div></div>';
+}
+function prodCard(p){
+  var buy=p.link?'<a class="btn sm red" href="'+esc(p.link)+'" target="_blank" rel="noopener">Kup teraz</a>':'<a class="btn sm red" href="#kontakt" data-subject="Zamówienie: '+esc(p.tytul)+'">Zamów</a>';
+  return '<div class="card hov">'+cover(p)+'<div class="body"><h3>'+esc(p.tytul)+'</h3>'+(p.opis?'<p class="meta" style="font-size:16px">'+esc(p.opis)+'</p>':'')+'<div class="foot"><span class="price">'+esc(p.cena)+'</span>'+buy+'</div></div></div>';
+}
+function mini(it,href,right){return '<a class="mini" href="'+href+'"><div class="th">'+cover(it)+'</div><div><b style="font-family:var(--f-display);font-weight:400;font-size:19px">'+esc(it.tytul)+'</b><div class="meta" style="font-size:14px;color:var(--muted)">'+right+'</div></div></a>';}
+
+/* ---------- views ---------- */
+function vHome(){
+  var w0=W[0], o='', tags=allTags();
+  o+='<div class="hero"><div class="wrap"><div class="hero-text"><span class="hand">Hej!</span><h1>Materiały do angielskiego, które <span class="pen-u">naprawdę<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 9c30-6 62-7 96-4s66 3 98-2"/></svg></span> się przydają</h1>'+
+     '<p class="rot">W środku: <span class="hand" id="rot">karty pracy</span></p>'+
+     '<p class="lead">Tu Angelika – lektorka angielskiego. Dzielę się kartami pracy i pomysłami na lekcje, które sprawdzają się w mojej klasie. Część za darmo, część w paczkach w sklepie.</p>'+
+     '<div class="row"><a class="btn red lg" href="#materialy">Darmowe materiały</a><a class="btn lg" href="#sklep">Zajrzyj do sklepu</a></div></div>'+
+     '<div class="desk" id="desk" aria-hidden="true">'+
+       (M[0]?'<div class="sheet s1">'+cover(M[0])+'</div>':'')+
+       (P[0]?'<div class="sheet s2">'+cover(P[0])+'</div>':'')+
+       (w0?'<div class="sheet s3"><span class="tape"></span>'+cover(w0)+'</div>':'')+
+       (P[0]?'<div class="stamp">tylko<br>'+esc(P[0].cena)+'</div>':'')+
+     '</div></div></div>';
+  if(tags.length)o+='<div class="strip-w"><div class="strip"><div class="track">'+[0,1].map(function(n){return tags.map(function(k){return '<a href="#kategoria-'+slug(k)+'"'+(n?' aria-hidden="true" tabindex="-1"':'')+'>'+esc(k)+'</a>';}).join('');}).join('')+'</div></div></div>';
+  if(Q.length)o+='<section class="quiz-sec"><div class="wrap quiz"><div class="qtext"><span class="eyebrow">Spróbuj</span><h2>Kartkówka w 30 sekund</h2><p class="lead">Kliknij odpowiedź, a czerwony długopis od razu ją sprawdzi.</p></div><div class="qsheet" id="qsheet"></div></div></section>';
+  if(W.length)o+='<section><div class="wrap"><div class="sec-head"><div><span class="eyebrow">Blog</span><h2>Najnowsze wpisy</h2></div><a class="btn ghost" href="#blog">Wszystkie wpisy →</a></div><div class="grid3">'+W.slice(0,3).map(postCard).join('')+'</div></div></section>';
+  o+='<section class="band-blush"><div class="wrap split">'+
+     '<div class="panel free"><span class="eyebrow">Za darmo</span><h2>Pobierz i drukuj</h2><p class="lead">Karty pracy, które możesz od razu wykorzystać na lekcji.</p><div class="stack" style="display:flex;flex-direction:column;gap:10px">'+M.slice(0,3).map(function(m){return mini(m,'#materialy',esc(m.dzial||'')+' · PDF');}).join('')+'</div><div><a class="btn" href="#materialy">Wszystkie darmowe materiały →</a></div></div>'+
+     '<div class="panel shop"><span class="eyebrow" style="color:var(--ink)">Sklep</span><h2>Płatne materiały</h2><p class="lead" style="color:var(--ink)">'+esc(S.sklepInfo)+'</p><div style="display:flex;flex-direction:column;gap:10px">'+P.slice(0,3).map(function(p){return mini(p,'#sklep','<b style="color:var(--ink)">'+esc(p.cena)+'</b>');}).join('')+'</div><div><a class="btn red" href="#sklep">Przejdź do sklepu →</a></div></div>'+
+     '</div></section>';
+  if(S.strefaUcznia)o+='<section class="band-dark"><div class="wrap student"><div style="display:flex;flex-direction:column;gap:18px"><span class="eyebrow">Strefa ucznia</span><h2>Kartkówki online z natychmiastowym wynikiem</h2><p class="lead">Moi uczniowie logują się swoim loginem, rozwiązują kartkówkę i od razu widzą, co poszło dobrze. Słówka, z którymi był kłopot, wracają w powtórkach.</p><div><a class="btn red" href="'+esc(S.strefaUcznia)+'">Zaloguj się do kartkówek →</a></div></div>'+
+     '<div class="mock" aria-hidden="true"><div style="font-size:12px;font-weight:800;letter-spacing:.08em;color:#5B6584">UZUPEŁNIJ LUKĘ</div><p class="q">She <span class="gap">goes</span> to school by bus.</p><p style="color:#5B6584;font-size:15px">Twoja odpowiedź: <s>go</s></p><p class="pen">→ goes</p></div></div></section>';
+  o+='<section><div class="wrap about"><div class="portrait"><img src="img/logo.png" alt="Logo Anglistycznie z Angie"></div><div style="display:flex;flex-direction:column;gap:20px"><span class="eyebrow">O mnie</span><blockquote>'+esc(O_MNIE[0])+'</blockquote><span class="sig">Angie</span><div class="row"><a class="btn" href="#o-mnie">Więcej o mnie</a>'+(S.facebook||S.instagram?'':'')+'</div></div></div></section>';
+  var soc=social();
+  if(soc)o+='<section class="band-blush" style="padding-block:56px"><div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:6px"><span class="hand" style="font-size:34px">Zostańmy w kontakcie!</span><p class="lead">Nowe materiały wrzucam najpierw na social media.</p></div>'+soc+'</div></section>';
+  return o;
+}
+function vMaterials(cat){
+  var cats=[];M.forEach(function(m){if(m.dzial&&cats.indexOf(m.dzial)<0)cats.push(m.dzial);});
+  var list=M.filter(function(m){return !cat||m.dzial===cat;});
+  var o='<div class="wrap"><div class="phead"><span class="hand">za darmo!</span><h1>Darmowe materiały</h1><p class="lead">Pobierz, wydrukuj i użyj na lekcji. Jeśli materiał Ci się przyda, daj znać na Instagramie – będzie mi bardzo miło.</p></div>';
+  if(cats.length>1)o+='<div class="filters"><a class="tag'+(cat?'':' on')+'" href="#materialy">Wszystkie</a>'+cats.map(function(c){return '<a class="tag'+(c===cat?' on':'')+'" href="#materialy-'+slug(c)+'">'+esc(c)+'</a>';}).join('')+'</div>';
+  o+=list.length?'<div class="grid3" style="padding-bottom:72px">'+list.map(matCard).join('')+'</div>':'<div class="empty" style="margin-bottom:72px">Wkrótce pojawią się tu nowe materiały.</div>';
+  return o+'</div>';
+}
+function vShop(){
+  var o='<div class="wrap"><div class="phead"><span class="hand">sklep</span><h1>Materiały</h1><p class="lead">'+esc(S.sklepInfo)+'</p></div>';
+  o+=P.length?'<div class="grid3">'+P.map(prodCard).join('')+'</div>':'<div class="empty">Sklep jest w przygotowaniu.</div>';
+  o+='<p class="meta" style="color:var(--muted);padding-block:28px 72px;font-size:15px">Masz pytanie o materiał albo potrzebujesz faktury? <a href="#kontakt">Napisz do mnie</a>.'+(S.regulamin?' Zakupy podlegają <a href="'+esc(S.regulamin)+'">regulaminowi sklepu</a>.':'')+'</p>';
+  return o+'</div>';
+}
+function allTags(){var t={};W.forEach(function(w){(w.kategorie||[]).forEach(function(k){t[k]=(t[k]||0)+1;});});return Object.keys(t).sort();}
+function archive(){var a={},order=[];W.forEach(function(w){var k=String(w.data).slice(0,7);if(!a[k]){a[k]=0;order.push(k);}a[k]++;});return order.map(function(k){return [k,a[k]];});}
+function vBlog(filter){
+  var list=W.filter(function(w){if(!filter)return true;if(filter.t==='kat')return (w.kategorie||[]).some(function(k){return slug(k)===filter.v;});return String(w.data).slice(0,7)===filter.v;});
+  var title=!filter?'Blog':filter.t==='kat'?'Kategoria: '+esc((allTags().filter(function(k){return slug(k)===filter.v;})[0])||filter.v):esc(fdate(filter.v));
+  var o='<div class="wrap"><div class="phead"><span class="hand">blog</span><h1>'+title+'</h1>'+(filter?'<p><a class="btn ghost" href="#blog" style="padding-left:0">← Wszystkie wpisy</a></p>':'<p class="lead">Pomysły na lekcje, materiały i trochę z życia lektorki.</p>')+'</div>';
+  o+='<div class="blog-layout" style="padding-bottom:72px"><div class="postlist">'+(list.length?list.map(function(w){return '<a class="prow" href="#wpis-'+esc(w.slug)+'">'+cover(w)+'<div class="body"><span class="meta" style="color:var(--muted);font-size:14px">'+fdate(w.data)+'</span><h3>'+esc(w.tytul)+'</h3><p style="color:var(--muted)">'+esc(w.zajawka)+'</p><div class="row" style="gap:6px">'+(w.kategorie||[]).slice(0,4).map(function(k){return '<span class="tag" style="font-size:13px">'+esc(k)+'</span>';}).join('')+'</div><span class="more">Czytaj dalej →</span></div></a>';}).join(''):'<div class="empty">Brak wpisów.</div>')+'</div>';
+  o+='<aside class="side"><div><h3>Kategorie</h3><div class="row" style="gap:6px">'+allTags().map(function(k){return '<a class="tag'+(filter&&filter.t==='kat'&&filter.v===slug(k)?' on':'')+'" href="#kategoria-'+slug(k)+'">'+esc(k)+'</a>';}).join('')+'</div></div>'+
+          (social()?'<div><h3>Obserwuj</h3>'+social()+'</div>':'')+'</aside></div>';
+  return o+'</div>';
+}
+function vPost(s){
+  var i=-1;W.forEach(function(w,k){if(w.slug===s)i=k;});if(i<0)return vBlog();
+  var w=W[i], paras=String(w.tresc||'').trim()?String(w.tresc).trim().split(/\n\s*\n/):[w.zajawka];
+  var o='<div class="wrap"><article class="post"><a class="btn ghost" href="#blog" style="padding-left:0;align-self:flex-start">← Blog</a><span class="meta" style="color:var(--muted)">'+fdate(w.data)+' · Angelika</span><h1 style="font-size:clamp(34px,5vw,54px)">'+esc(w.tytul)+'</h1>';
+  o+='<div class="cover">'+cover(w)+'</div><div class="text">'+paras.map(function(p){return '<p>'+esc(p).replace(/\n/g,'<br>')+'</p>';}).join('')+'</div>';
+  if(w.material&&w.material.plik)o+='<div class="dl"><div><span class="eyebrow">Materiał do pobrania</span><h3>'+esc(w.material.tytul)+'</h3></div><a class="btn red" href="'+esc(w.material.plik)+'" download>'+ICON.dl+'Pobierz PDF</a></div>';
+  o+='<div class="row" style="gap:6px">'+(w.kategorie||[]).map(function(k){return '<a class="tag" href="#kategoria-'+slug(k)+'">'+esc(k)+'</a>';}).join('')+'</div>';
+  var prev=W[i+1],next=W[i-1];
+  o+='<div class="row" style="justify-content:space-between;border-top:1px solid var(--line);padding-top:20px">'+(prev?'<a class="btn ghost" href="#wpis-'+prev.slug+'" style="padding-left:0">← '+esc(prev.tytul)+'</a>':'<span></span>')+(next?'<a class="btn ghost" href="#wpis-'+next.slug+'">'+esc(next.tytul)+' →</a>':'')+'</div>';
+  return o+'</article></div>';
+}
+function vAbout(){
+  return '<div class="wrap"><div class="about" style="padding-block:56px 72px"><div class="portrait"><img src="img/logo.png" alt="Logo Anglistycznie z Angie"></div><div style="display:flex;flex-direction:column;gap:20px"><span class="hand" style="font-size:44px">Hej!</span><h1>Witam Cię na blogu Anglistycznie :)</h1>'+
+    O_MNIE.map(function(p){return '<p style="font-size:20px;line-height:1.7">'+esc(p)+'</p>';}).join('')+'<span class="sig">Angie</span>'+social()+'</div></div></div>';
+}
+function vContact(subject){
+  var o='<div class="wrap"><div class="phead"><span class="hand">napisz!</span><h1>Kontakt</h1><p class="lead">Pytanie o materiał, współpraca albo po prostu „hej” – chętnie odpiszę.</p></div><div class="contact" style="padding-block:20px 72px"><div style="display:flex;flex-direction:column;gap:22px">';
+  if(S.email)o+='<div><span class="eyebrow">E-mail</span><p class="mail"><a href="mailto:'+esc(S.email)+'">'+esc(S.email)+'</a></p></div>';
+  o+=(social()?'<div style="display:flex;flex-direction:column;gap:10px"><span class="eyebrow">Social media</span>'+social()+'</div>':'')+'</div>';
+  if(S.email&&S.formularz){
+    o+='<form class="form" id="cf" action="https://formsubmit.co/'+esc(S.email)+'" method="POST"><input type="hidden" name="_subject" id="cf-sub" value="'+esc(subject||'Wiadomość ze strony Anglistycznie')+'"><input type="hidden" name="_next" id="cf-next" value=""><input type="hidden" name="_template" value="table">'+
+      '<input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">'+
+      '<label>Imię<input name="imie" id="cf-name" required autocomplete="name"></label><label>Twój e-mail<input name="email" id="cf-mail" type="email" required autocomplete="email"></label>'+
+      '<label>Wiadomość<textarea name="wiadomosc" id="cf-msg" rows="6" required>'+(subject?esc(subject)+'\n\n':'')+'</textarea></label><button class="btn red" type="submit" style="align-self:flex-start">Wyślij wiadomość</button></form>';
+  } else if(!S.email&&!social()) o+='<div class="empty">Dane kontaktowe pojawią się wkrótce.</div>';
+  return o+'</div></div>';
+}
+function vThanks(){return '<div class="wrap"><div class="phead" style="padding-bottom:120px"><span class="hand">dzięki!</span><h1>Wiadomość wysłana</h1><p class="lead">Odpiszę najszybciej, jak się da.</p><p><a class="btn" href="#">Wróć na stronę główną</a></p></div></div>';}
+
+/* ---------- shell ---------- */
+var NAV=[['','Start'],['materialy','Darmowe materiały'],['sklep','Sklep'],['blog','Blog'],['o-mnie','O mnie'],['kontakt','Kontakt']];
+function shell(route,body){
+  var sec=route.split('-')[0]; if(sec==='wpis'||sec==='kategoria'||sec==='archiwum')sec='blog';
+  var o=W[0]?'<div class="ann">Nowe na blogu: <a href="#wpis-'+esc(W[0].slug)+'">'+esc(W[0].tytul)+'</a></div>':'';
+  o+='<header class="top"><div class="wrap"><a class="logo" href="#" aria-label="Anglistycznie z Angie – strona główna"><img src="img/logo.png" alt="Anglistycznie z Angie"></a>'+
+    '<nav class="main" id="nav">'+NAV.map(function(n){return '<a href="#'+n[0]+'"'+(sec===n[0]||(n[0]===''&&sec==='')?' class="on"':'')+'>'+n[1]+'</a>';}).join('')+(S.strefaUcznia?'<a class="btn sm red" href="'+esc(S.strefaUcznia)+'" style="margin-left:6px">Strefa ucznia</a>':'')+'</nav>'+
+    '<button class="icon-btn" data-a="search" aria-label="Szukaj">'+ICON.search+'</button><button class="icon-btn burger" data-a="menu" aria-label="Menu" aria-controls="nav" aria-expanded="false">'+ICON.menu+'</button></div></header>';
+  o+='<main>'+body+'</main>';
+  o+=BUS+'<footer><div class="wrap"><div class="cols"><div style="display:flex;flex-direction:column;gap:18px"><img src="img/logo-jasne.png" alt="Anglistycznie z Angie" style="width:200px">'+social()+'</div>'+
+    '<div><h4>Strona</h4><ul>'+NAV.map(function(n){return '<li><a href="#'+n[0]+'">'+n[1]+'</a></li>';}).join('')+(S.strefaUcznia?'<li><a href="'+esc(S.strefaUcznia)+'">Strefa ucznia</a></li>':'')+'</ul></div></div>'+
+    '<div class="legal"><span>© '+new Date().getFullYear()+' Anglistycznie z Angie'+(S.stopka?' · '+esc(S.stopka):'')+'</span><span class="row" style="gap:18px">'+(S.polityka?'<a href="'+esc(S.polityka)+'">Polityka prywatności</a>':'')+(S.regulamin?'<a href="'+esc(S.regulamin)+'">Regulamin</a>':'')+'</span></div></div></footer>';
+  return o;
+}
+var pendingSubject='';
+function route(){
+  var h=decodeURIComponent((location.hash||'').replace(/^#/,'')), body;
+  if(!h||h==='start')body=vHome();
+  else if(h==='materialy')body=vMaterials('');
+  else if(h.indexOf('materialy-')===0){var c=null;M.forEach(function(m){if(slug(m.dzial||'')===h.slice(10))c=m.dzial;});body=vMaterials(c||'');}
+  else if(h==='sklep')body=vShop();
+  else if(h==='blog')body=vBlog(null);
+  else if(h.indexOf('kategoria-')===0)body=vBlog({t:'kat',v:h.slice(10)});
+  else if(h.indexOf('archiwum-')===0)body=vBlog({t:'arch',v:h.slice(9)});
+  else if(h.indexOf('wpis-')===0)body=vPost(h.slice(5));
+  else if(h==='o-mnie')body=vAbout();
+  else if(h==='kontakt'){body=vContact(pendingSubject);pendingSubject='';}
+  else if(h==='dziekuje')body=vThanks();
+  else body=vHome();
+  app.innerHTML=shell(h,body);
+  window.scrollTo(0,0);
+  enhance();
+  var t=h.indexOf('wpis-')===0?(W.filter(function(w){return w.slug===h.slice(5);})[0]||{}).tytul:null;
+  document.title=(t?t+' – ':'')+'Anglistycznie z Angie';
+}
+/* search */
+function openSearch(){
+  var d=document.createElement('div');d.className='search';d.innerHTML='<div class="box" role="dialog" aria-label="Szukaj"><input id="sq" placeholder="Szukaj: np. animals, quantifiers…" autocomplete="off"><div class="sres" id="sr"></div></div>';
+  document.body.appendChild(d);var q=d.querySelector('#sq');q.focus();
+  function draw(){var v=q.value.trim().toLowerCase(),r=[];
+    if(v){W.forEach(function(w){if((w.tytul+' '+w.zajawka+' '+(w.kategorie||[]).join(' ')).toLowerCase().indexOf(v)>=0)r.push(['Blog',w.tytul,'#wpis-'+w.slug]);});
+      M.forEach(function(m){if((m.tytul+' '+(m.dzial||'')+' '+(m.opis||'')).toLowerCase().indexOf(v)>=0)r.push(['Za darmo',m.tytul,'#materialy']);});
+      P.forEach(function(p){if((p.tytul+' '+(p.opis||'')).toLowerCase().indexOf(v)>=0)r.push(['Sklep',p.tytul+' · '+p.cena,'#sklep']);});}
+    d.querySelector('#sr').innerHTML=!v?'<p style="color:var(--muted);padding:6px 10px">Wpisz temat, słówko albo nazwę materiału.</p>':r.length?r.map(function(x){return '<a href="'+x[2]+'"><span class="k">'+x[0]+'</span><span>'+esc(x[1])+'</span></a>';}).join(''):'<p style="color:var(--muted);padding:6px 10px">Nic nie znalazłam. Spróbuj innego słowa.</p>';}
+  q.addEventListener('input',draw);draw();
+  d.addEventListener('click',function(e){if(e.target===d||e.target.closest('a'))d.remove();});
+  d.addEventListener('keydown',function(e){if(e.key==='Escape')d.remove();});
+}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-a]');
+  if(b&&b.dataset.a==='search')openSearch();
+  if(b&&b.dataset.a==='menu'){var n=document.getElementById('nav');n.classList.toggle('open');b.setAttribute('aria-expanded',n.classList.contains('open'));}
+  var s=e.target.closest('[data-subject]');if(s)pendingSubject=s.getAttribute('data-subject');
+});
+document.addEventListener('submit',function(e){
+  if(e.target.id==='cf'){var n=document.getElementById('cf-next');n.value=location.href.split('#')[0]+'#dziekuje';}
+});
+/* ---------- premium: ruch i kartkówka ---------- */
+var Q=window.KARTKOWKA||[], rotT=0, qi=0, score=0, RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+var BUS='<div class="road" id="road" aria-hidden="true"><span class="hand bye">See you!</span><svg class="bus" viewBox="0 0 184 108">'+
+  '<ellipse cx="92" cy="101" rx="80" ry="4" fill="#2F2729" opacity=".13"/>'+
+  '<rect x="6" y="8" width="172" height="78" rx="15" fill="#E0607E"/><rect x="6" y="8" width="172" height="40" rx="15" fill="#E87391"/><rect x="6" y="34" width="172" height="14" fill="#E87391"/>'+
+  '<rect x="14" y="11" width="156" height="4" rx="2" fill="#F6A9BC"/>'+
+  '<rect x="6" y="45" width="172" height="8" fill="#FFF4F7"/><text x="92" y="51.3" text-anchor="middle" font-family="Figtree,Arial,sans-serif" font-weight="800" font-size="5.6" letter-spacing="2.2" fill="#C73E78">ANGLISTYCZNIE</text>'+
+  [14,36,58,80,102].map(function(x){return '<rect x="'+x+'" y="19" width="18" height="20" rx="4.5" fill="#D9F0F8"/><path d="M'+(x+3)+' 35l8-13" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>';}).join('')+
+  '<rect x="126" y="19" width="44" height="11" rx="3" fill="#2F2729"/><text x="148" y="27.2" text-anchor="middle" font-family="Figtree,Arial,sans-serif" font-weight="800" font-size="6.4" letter-spacing="1.4" fill="#FFE9A8">ANGIE</text><rect x="126" y="33" width="44" height="6" rx="3" fill="#D9F0F8"/>'+
+  [14,36,58,80].map(function(x){return '<rect x="'+x+'" y="58" width="18" height="17" rx="4.5" fill="#D9F0F8"/><path d="M'+(x+3)+' 72l7-11" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>';}).join('')+
+  '<rect x="104" y="57" width="22" height="29" rx="4" fill="#FFF4F7"/><path d="M115 59v25" stroke="#E0607E" stroke-width="1.6"/><rect x="107" y="61" width="5.5" height="11" rx="2" fill="#D9F0F8"/><rect x="117.500" y="61" width="5.5" height="11" rx="2" fill="#D9F0F8"/>'+
+  '<rect x="132" y="58" width="38" height="17" rx="4.500" fill="#D9F0F8"/><path d="M136 72l7-11" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>'+
+  '<rect x="6" y="80" width="172" height="6" rx="3" fill="#C24A6B"/><circle cx="173" cy="78" r="3.4" fill="#FFE9A8"/><rect x="5" y="72" width="4" height="8" rx="2" fill="#F6A9BC"/>'+
+  [46,134].map(function(x){return '<g class="wh"><circle cx="'+x+'" cy="88" r="14" fill="#2F2729"/><circle cx="'+x+'" cy="88" r="7" fill="#F3B8CB"/><path d="M'+x+' 81v14M'+(x-7)+' 88h14" stroke="#2F2729" stroke-width="1.8"/><circle cx="'+x+'" cy="88" r="2.2" fill="#2F2729"/></g>';}).join('')+
+  '</svg></div>';
+function drawQ(pick){
+  var el=document.getElementById('qsheet');if(!el)return;
+  var head='<div class="qhead"><span>Name: <i>Ty</i></span><span>Date: <i>'+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'</i></span></div>';
+  if(qi>=Q.length){el.innerHTML=head+'<div class="qres"><span class="grade">'+score+'/'+Q.length+'</span><p class="hand qfb">'+(score===Q.length?'Excellent!':score?'Good job!':'Try again!')+'</p><div class="row" style="justify-content:center"><button class="btn sm" data-q="again">Jeszcze raz</button><a class="btn sm red" href="#materialy">Darmowe materiały</a></div></div>';return;}
+  var q=Q[qi],done=pick!==undefined,ok=done&&pick===q.dobra,parts=String(q.pytanie).split('___');
+  var gap=!done?'<span class="gap">&nbsp;</span>':ok?'<span class="gap">'+esc(q.odp[pick])+'</span>':'<span class="gap bad"><s>'+esc(q.odp[pick])+'</s> '+esc(q.odp[q.dobra])+'</span>';
+  el.innerHTML=head+'<div class="qno">Task '+(qi+1)+' / '+Q.length+(q.temat?' · '+esc(q.temat):'')+'</div><p class="qq">'+esc(parts[0])+gap+esc(parts[1]||'')+'</p>'+
+    '<div class="qopts">'+q.odp.map(function(a,k){return '<button class="btn'+(done&&k===q.dobra?' right':'')+(done&&k===pick&&!ok?' wrong':'')+'" data-q="'+k+'"'+(done?' disabled':'')+'>'+esc(a)+'</button>';}).join('')+'</div>'+
+    '<div class="qfoot">'+(done?'<span class="hand qfb">'+(ok?'✓ Well done!':'Not quite!')+'</span><button class="btn sm red" data-q="next">'+(qi+1<Q.length?'Next →':'Wynik →')+'</button>':'<span class="meta" style="color:var(--muted)">Wybierz odpowiedź</span>')+'</div>';
+}
+function enhance(){
+  clearInterval(rotT);
+  var r=document.getElementById('rot');
+  if(r&&!RM){var words=['karty pracy','gry','pomysły na lekcje'].concat(S.strefaUcznia?['kartkówki online']:[]),i=0;
+    rotT=setInterval(function(){i=(i+1)%words.length;r.textContent=words[i];r.classList.remove('swap');void r.offsetWidth;r.classList.add('swap');},1900);}
+  var d=document.getElementById('desk');
+  if(d&&!RM&&window.matchMedia('(hover:hover)').matches){var hero=d.closest('.hero');
+    hero.addEventListener('pointermove',function(e){var b=hero.getBoundingClientRect();d.style.setProperty('--mx',((e.clientX-b.left)/b.width-.5).toFixed(3));d.style.setProperty('--my',((e.clientY-b.top)/b.height-.5).toFixed(3));});
+    hero.addEventListener('pointerleave',function(){d.style.setProperty('--mx',0);d.style.setProperty('--my',0);});}
+  if(document.getElementById('qsheet')){qi=0;score=0;drawQ();}
+  var road=document.getElementById('road');
+  if(road){if(RM||!('IntersectionObserver' in window))road.classList.add('parked');
+    else new IntersectionObserver(function(en,ob){if(en[0].isIntersecting){road.classList.add('go');ob.disconnect();}},{threshold:.6}).observe(road);}
+}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-q]');if(!b)return;var v=b.dataset.q;
+  if(v==='next'){qi++;drawQ();}else if(v==='again'){qi=0;score=0;drawQ();}else{if(+v===Q[qi].dobra)score++;drawQ(+v);}
+});
+window.addEventListener('hashchange',route);
+route();
+})();
+</script>
+
+</body></html>
