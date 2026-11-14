@@ -182,10 +182,13 @@ async function generateWeek(g: any) {
     `Example:\nMonday\nrun out of | phrasal verb | to have none left of something | skończyć się, wyczerpać zapasy | We ran out of milk, so I had to run to the shop before breakfast.\n` +
     `Plain text only: no Markdown, no tables, no bold, no numbering, no headings, no comments.`;
   const text = await claude(system, user, 4000);
+  if (!text.trim()) throw new Error("ai_empty");
+  const raw = text;
   // Linie z „|” to wyrażenia; krótkie linie z nazwą dnia (też „**Monday**”, „Day 1 – Monday”) zostają, resztę porządkuje aplikacja.
-  return text.split(/\r?\n/).map((l) => l.trim()).filter((l) => l && (l.includes("|") ||
+  const lines = text.split(/\r?\n/).map((l) => l.trim().replace(/\t+/g, " | ")).filter((l) => l && (l.includes("|") ||
     (l.length < 40 && /\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i.test(l))))
     .join("\n");
+  return { lines, raw };
 }
 
 Deno.serve(async (req) => {
@@ -224,7 +227,9 @@ Deno.serve(async (req) => {
     if (body.action === "week") {
       const auth = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
       await rpc("t_ping", {}, apikey, auth);
-      return reply({ lines: await generateWeek(body) });
+      const week = await generateWeek(body);
+      // Gdy po filtrowaniu nie ma żadnego wyrażenia, oddaj też surowy tekst AI, żeby aplikacja mogła go pokazać.
+      return reply(week.lines.includes("|") ? { lines: week.lines } : { lines: week.lines, raw: week.raw.slice(0, 6000) });
     }
 
     return reply({ error: "bad_action" }, 400);

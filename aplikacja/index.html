@@ -285,6 +285,7 @@ var ERR={
   no_service_key:'Funkcja AI nie ma dostępu do bazy. Sprawdź krok 5 instrukcji.',
   ai_bad_output:'AI zwróciło niepełne zadania. Spróbuj jeszcze raz.',
   ai_error:'AI chwilowo nie odpowiada. Spróbuj za minutę.',
+  ai_empty:'AI odpowiedziało pustym tekstem. Spróbuj jeszcze raz za chwilę.',
   'Requested function was not found':'Funkcja AI nie jest jeszcze wdrożona w Supabase (instrukcja, krok 5).',
   NOT_FOUND:'Funkcja AI nie jest jeszcze wdrożona w Supabase (instrukcja, krok 5).',
   'Invalid JWT':'Funkcja AI ma włączone „Verify JWT”. Wyłącz je w ustawieniach funkcji (instrukcja, krok 5).',
@@ -1059,7 +1060,7 @@ function cleanAiWeek(text,days,per){
   days=Math.max(1,Math.min(7,parseInt(days,10)||5));per=Math.max(1,parseInt(per,10)||6);
   var out=[],items=[],anyDay=false;
   String(text||'').split(/\r?\n/).forEach(function(raw){
-    var l=raw.replace(/[*_`]+/g,'').replace(/^\s*(#+|>|[-•]\s|\d+[.)]\s)\s*/,'').trim();
+    var l=raw.replace(/\t+/g,' | ').replace(/[*_`]+/g,'').replace(/^\s*(#+|>|[-•]\s|\d+[.)]\s)\s*/,'').trim();
     if(!l||/^[\s|:\-]+$/.test(l))return;
     if(l.indexOf('|')>=0){
       l=l.replace(/^\|\s*/,'').replace(/\s*\|$/,'').replace(/^\d+[.)]\s*/,'');
@@ -1078,6 +1079,7 @@ SD['ts-ai']=function(){
   var e=S.sedit;S.saiBusy=true;S.saiErr='';render();
   aiCall({action:'week',topic:e.ai.topic,words:e.ai.words,days:e.ai.days,per_day:e.ai.per_day,level:e.ai.level},true).then(function(r){
     var raw=String(r&&r.lines||'').trim(), lines=cleanAiWeek(raw,e.ai.days,e.ai.per_day);
+    if(!parseWeek(lines).days.length&&r&&r.raw){raw=String(r.raw).trim();lines=cleanAiWeek(raw,e.ai.days,e.ai.per_day);}
     if(!parseWeek(lines).days.length){
       S.saiBusy=false;
       if(!raw){var dump='';try{dump=JSON.stringify(r);}catch(x){}S.saiErr='AI nie zwróciło żadnych wyrażeń. Odpowiedź serwera: '+String(dump||'(pusta)').slice(0,300);render();return;}
