@@ -1087,7 +1087,7 @@ SD['ts-ai']=function(){
     }
     e.text=e.text.trim()?e.text.replace(/\s+$/,'')+'\n\n'+lines:lines;S.saiBusy=false;render();
     var ta=document.getElementById('se-text');if(ta)ta.scrollIntoView({block:'center'});
-  }).catch(function(er){S.saiBusy=false;S.saiErr=errText(er);render();});
+  }).catch(function(er){S.saiBusy=false;S.saiErr=errText(er);var c=String(er&&er.code||'');if(c.indexOf('ai_empty:')>=0)S.saiErr+=' Szczegóły: '+c.slice(c.indexOf('ai_empty:')+9).trim();render();});
 };
 SD['ts-save']=function(){
   var e=S.sedit,p=parseWeek(e.text);
