@@ -51,7 +51,13 @@ async function claude(system: string, user: string, maxTokens: number): Promise<
   });
   const j: any = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error("ai_error: " + (j?.error?.message ?? r.status));
-  return (j.content ?? []).filter((c: any) => c.type === "text").map((c: any) => c.text).join("");
+  const text = (j.content ?? []).filter((c: any) => c.type === "text").map((c: any) => c.text).join("");
+  if (!text.trim()) {
+    // Diagnostyka: dlaczego AI nie napisało tekstu (np. max_tokens, refusal, same bloki thinking).
+    const kinds = (j.content ?? []).map((c: any) => c.type).join(",") || "brak";
+    throw new Error(`ai_empty: stop_reason=${j.stop_reason ?? "?"}; bloki=${kinds}; model=${j.model ?? MODEL}`);
+  }
+  return text;
 }
 
 function extractJson(t: string) {
@@ -181,8 +187,10 @@ async function generateWeek(g: any) {
     `phrase | type | short English definition | Polish equivalent | one natural model sentence of 12-15 words with a concrete detail\n` +
     `Example:\nMonday\nrun out of | phrasal verb | to have none left of something | skończyć się, wyczerpać zapasy | We ran out of milk, so I had to run to the shop before breakfast.\n` +
     `Plain text only: no Markdown, no tables, no bold, no numbering, no headings, no comments.`;
-  const text = await claude(system, user, 4000);
-  if (!text.trim()) throw new Error("ai_empty");
+  // Jedna ponowna próba, gdy AI odda pustą odpowiedź.
+  let text = "";
+  try { text = await claude(system, user, 8000); }
+  catch (e) { if (!String((e as Error).message).startsWith("ai_empty")) throw e; text = await claude(system, user, 8000); }
   const raw = text;
   // Linie z „|” to wyrażenia; krótkie linie z nazwą dnia (też „**Monday**”, „Day 1 – Monday”) zostają, resztę porządkuje aplikacja.
   const lines = text.split(/\r?\n/).map((l) => l.trim().replace(/\t+/g, " | ")).filter((l) => l && (l.includes("|") ||
