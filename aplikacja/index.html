@@ -184,6 +184,9 @@ tr.click:hover td{background:var(--paper)}
 .slips{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
 .slip{border:1px dashed var(--muted);border-radius:10px;padding:12px 14px;background:var(--card)}
 .slip b{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:17px}
+.slip{position:relative;cursor:pointer}
+.slip .pick{position:absolute;top:10px;right:10px;width:20px;height:20px;pointer-events:none;accent-color:var(--accent,#3a55d8)}
+.slip.off{opacity:.35;border-style:dotted}
 .print-only{display:none}
 /* daily sentences */
 .ds-days{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
@@ -243,6 +246,8 @@ tr.click:hover td{background:var(--paper)}
   .printable{position:absolute;left:0;top:0;width:100%}
   .printable .no-print{display:none}
   .slip{break-inside:avoid;border-color:#000;background:#fff}
+  .slip.off{display:none}
+  .slip .pick{display:none}
   .print-only{display:block}
 }
 </style>
@@ -760,9 +765,10 @@ function tStudents(){
    '<label class="f">Imiona i nazwiska – jedna osoba w linii<textarea class="inp" id="ns-names" rows="5" placeholder="Jan Kowalski&#10;Zofia Nowak">'+esc(S.nsNames||'')+'</textarea></label>'+
    '<div class="row"><button class="btn primary" data-a="addstudents"'+(S.adding?' disabled':'')+'>'+(S.adding?'<span class="spin"></span> Tworzę konta…':'Utwórz konta')+'</button></div></section>';
   if(S.newAcc&&S.newAcc.length){
-    out+='<section class="card printable"><div class="row no-print"><h2>'+esc(S.slipsTitle||'Nowe konta')+'</h2><span class="spacer"></span><button class="btn sm" data-a="copyacc">Kopiuj listę</button><button class="btn sm" data-a="printacc">Drukuj kartki</button><button class="btn sm ghost" data-a="closeacc">Zamknij</button></div>'+
-     '<p class="meta no-print">Kliknij „Drukuj kartki”, potnij i rozdaj uczniom.</p><div class="slips">'+
-     S.newAcc.map(function(a){return '<div class="slip"><div><b style="font-family:var(--f-display)">'+esc(a.full_name)+'</b>'+(a.class_name?' · '+esc(a.class_name):'')+'</div><div class="meta">'+esc(location.origin+location.pathname)+'</div><div>Login: <b>'+esc(a.login)+'</b></div><div>PIN: <b>'+esc(a.pin)+'</b></div></div>';}).join('')+'</div></section>';
+    var nSel=S.newAcc.filter(function(a){return !a.off;}).length;
+    out+='<section class="card printable"><div class="row no-print"><h2>'+esc(S.slipsTitle||'Nowe konta')+'</h2><span class="spacer"></span><button class="btn sm" data-a="copyacc">Kopiuj listę</button><button class="btn sm" data-a="printacc"'+(nSel?'':' disabled')+'>Drukuj kartki ('+nSel+')</button><button class="btn sm ghost" data-a="closeacc">Zamknij</button></div>'+
+     '<div class="row no-print" style="gap:8px;align-items:center"><p class="meta">Kliknij kartkę, żeby ją zaznaczyć lub odznaczyć. Wydrukują się tylko zaznaczone: '+nSel+' z '+S.newAcc.length+'.</p><span class="spacer"></span><button class="btn sm ghost" data-a="slipall">Zaznacz wszystkie</button><button class="btn sm ghost" data-a="slipnone">Odznacz wszystkie</button></div><div class="slips">'+
+     S.newAcc.map(function(a,i){return '<div class="slip'+(a.off?' off':'')+'" data-a="slipsel" data-i="'+i+'" role="checkbox" aria-checked="'+(!a.off)+'" tabindex="0"><input type="checkbox" class="pick" tabindex="-1" aria-hidden="true"'+(a.off?'':' checked')+'><div><b style="font-family:var(--f-display)">'+esc(a.full_name)+'</b>'+(a.class_name?' · '+esc(a.class_name):'')+'</div><div class="meta">'+esc(location.origin+location.pathname)+'</div><div>Login: <b>'+esc(a.login)+'</b></div><div>PIN: <b>'+esc(a.pin)+'</b></div></div>';}).join('')+'</div></section>';
   }
   out+='<div class="filters"><label class="f">Klasa'+classSelect('f-sc',fc)+'</label><p class="meta" style="padding-bottom:10px">'+list.length+' '+pl(list.length,'uczeń','uczniów','uczniów')+'</p><span class="spacer"></span><div class="row" style="padding-bottom:6px"><button class="btn" data-a="pinsall">'+(S.showPins?'Ukryj PIN-y':'Pokaż wszystkie PIN-y')+'</button><button class="btn" data-a="slipsall"'+(list.length?'':' disabled')+'>Kartki z loginami'+(fc?' – '+esc(fc):'')+'</button></div></div>';
   if(!st.length)return out+'<div class="empty">Nie ma jeszcze uczniów. Dodaj ich powyżej.</div>';
@@ -1165,7 +1171,10 @@ app.addEventListener('click',function(ev){
       S.adding=true;S.err='';render();
       trpc('t_create_students',{p_rows:names.map(function(n){return {full_name:n,class_name:cls};})}).then(function(r){S.adding=false;if(S.slipsTitle!=='Nowe konta')S.newAcc=[];S.slipsTitle='Nowe konta';S.newAcc=(S.newAcc||[]).concat(r);S.nsNames='';return trpc('t_students');}).then(function(r){S.students=r;render();}).catch(function(e){S.adding=false;S.err=errText(e);render();});
       break;
-    case 'copyacc':copyText(S.newAcc.map(function(x){return x.full_name+(x.class_name?' ('+x.class_name+')':'')+'\tlogin: '+x.login+'\tPIN: '+x.pin;}).join('\n')+'\n\nStrona: '+location.origin+location.pathname,b);break;
+    case 'slipsel':var si=+b.getAttribute('data-i');if(S.newAcc[si])S.newAcc[si].off=!S.newAcc[si].off;render();break;
+    case 'slipall':S.newAcc.forEach(function(x){x.off=false;});render();break;
+    case 'slipnone':S.newAcc.forEach(function(x){x.off=true;});render();break;
+    case 'copyacc':copyText(S.newAcc.filter(function(x){return !x.off;}).map(function(x){return x.full_name+(x.class_name?' ('+x.class_name+')':'')+'\tlogin: '+x.login+'\tPIN: '+x.pin;}).join('\n')+'\n\nStrona: '+location.origin+location.pathname,b);break;
     case 'printacc':window.print();break;
     case 'closeacc':S.newAcc=null;render();break;
     case 'resetpin':trpc('t_reset_pin',{p_student_id:id}).then(function(r){S.pinFor={id:id,pin:r.pin};return trpc('t_students');}).then(function(r){S.students=r;render();}).catch(function(e){S.err=errText(e);render();});break;
@@ -1189,6 +1198,7 @@ document.addEventListener('keydown',function(ev){
   if(ev.key==='Escape'&&S.sheet){S.sheet=null;S.delAtt=null;render();return;}
   var t=ev.target;
   if(ev.key==='Enter'&&t.matches&&t.matches('tr.click')){t.click();return;}
+  if((ev.key==='Enter'||ev.key===' ')&&t.matches&&t.matches('.slip')){ev.preventDefault();t.click();return;}
   if(S.v==='test'&&ev.key==='Enter'&&t.hasAttribute('data-i')&&t.tagName==='INPUT'){ev.preventDefault();var n=document.getElementById('a-'+(+t.getAttribute('data-i')+1));if(n)n.focus();else t.blur();}
 });
 app.addEventListener('input',function(ev){
