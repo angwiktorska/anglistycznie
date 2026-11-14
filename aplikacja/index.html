@@ -1077,7 +1077,12 @@ function cleanAiWeek(text,days,per){
 SD['ts-ai']=function(){
   var e=S.sedit;S.saiBusy=true;S.saiErr='';render();
   aiCall({action:'week',topic:e.ai.topic,words:e.ai.words,days:e.ai.days,per_day:e.ai.per_day,level:e.ai.level},true).then(function(r){
-    var lines=cleanAiWeek(r&&r.lines,e.ai.days,e.ai.per_day);if(!parseWeek(lines).days.length)throw {code:'ai_bad_output'};
+    var raw=String(r&&r.lines||'').trim(), lines=cleanAiWeek(raw,e.ai.days,e.ai.per_day);
+    if(!parseWeek(lines).days.length){
+      S.saiBusy=false;
+      if(!raw){var dump='';try{dump=JSON.stringify(r);}catch(x){}S.saiErr='AI nie zwróciło żadnych wyrażeń. Odpowiedź serwera: '+String(dump||'(pusta)').slice(0,300);render();return;}
+      lines=raw;S.saiErr='AI zwróciło tekst w nietypowym formacie. Wstawiłam go do pola „Wyrażenia” poniżej: popraw linie zaznaczone na czerwono w podglądzie albo usuń je i spróbuj jeszcze raz.';
+    }
     e.text=e.text.trim()?e.text.replace(/\s+$/,'')+'\n\n'+lines:lines;S.saiBusy=false;render();
     var ta=document.getElementById('se-text');if(ta)ta.scrollIntoView({block:'center'});
   }).catch(function(er){S.saiBusy=false;S.saiErr=errText(er);render();});
