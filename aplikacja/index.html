@@ -606,7 +606,7 @@ function openAttempt(id){
   S.sheet='<div class="loading"><span class="spin"></span> Ładowanie…</div>';render();
   trpc('t_attempt',{p_attempt_id:id}).then(function(a){
     S.sheetAttempt=a;
-    S.sheet='<div class="row"><span class="spacer"></span><button class="btn" data-a="sheetclose">Zamknij ✕</button></div>'+vResult(a,true)+
+    S.sheet='<div class="row">'+(S.sheetStudent?'<button class="btn ghost" data-a="stdetail" data-id="'+S.sheetStudent+'" style="padding-left:0">← Uczeń</button>':'')+'<span class="spacer"></span><button class="btn" data-a="sheetclose">Zamknij ✕</button></div>'+vResult(a,true)+
      '<div class="card"><p class="meta">Usunięcie wyniku pozwoli uczniowi napisać tę kartkówkę jeszcze raz. Statystyki słówek zostają.</p><div class="row" id="delatt">'+(S.delAtt===id?'<button class="btn danger" data-a="delatt2" data-id="'+id+'">Na pewno usunąć?</button><button class="btn ghost" data-a="delatt0">Anuluj</button>':'<button class="btn danger" data-a="delatt" data-id="'+id+'">Usuń ten wynik</button>')+'</div></div>';
     render();
   }).catch(function(e){S.sheet='<p class="msg err">'+errText(e)+'</p><button class="btn" data-a="sheetclose">Zamknij</button>';render();});
@@ -778,6 +778,7 @@ function tStudents(){
   return out+'</tbody></table></div>';
 }
 function openStudentDetail(id){
+  S.sheetStudent=id;
   var s=(S.students||[]).filter(function(x){return x.id===id;})[0]||{};
   S.sheet='<div class="loading"><span class="spin"></span> Ładowanie…</div>';render();
   Promise.all([trpc('t_student_detail',{p_student_id:id}),S.results?Promise.resolve(S.results):trpc('t_results')]).then(function(r){
@@ -1052,10 +1053,31 @@ SD['ts-csv']=function(){
   try{var blob=new Blob([sovCsv()],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download='daily-sentences-'+String(S.sov.week.week_start).slice(0,10)+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1000);}catch(e){S.err='Nie udało się pobrać pliku CSV.';render();}
 };
+/* Porządkuje odpowiedź AI: zdejmuje Markdown (**, #, tabele, numerację), rozpoznaje dni typu „**Monday**” albo „Day 1 – Monday”,
+   pomija nagłówki tabel, a gdy AI nie podało dni, dzieli wyrażenia na dni po „Wyrażeń na dzień”. */
+function cleanAiWeek(text,days,per){
+  days=Math.max(1,Math.min(7,parseInt(days,10)||5));per=Math.max(1,parseInt(per,10)||6);
+  var out=[],items=[],anyDay=false;
+  String(text||'').split(/\r?\n/).forEach(function(raw){
+    var l=raw.replace(/[*_`]+/g,'').replace(/^\s*(#+|>|[-•]\s|\d+[.)]\s)\s*/,'').trim();
+    if(!l||/^[\s|:\-]+$/.test(l))return;
+    if(l.indexOf('|')>=0){
+      l=l.replace(/^\|\s*/,'').replace(/\s*\|$/,'').replace(/^\d+[.)]\s*/,'');
+      var first=l.split('|')[0].trim().toLowerCase();
+      if(!first||first==='phrase'||first==='wyrażenie'||first==='expression')return;
+      out.push(l);items.push(l);return;
+    }
+    var m=l.toLowerCase().match(/\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday|poniedziałek|poniedzialek|wtorek|środa|sroda|czwartek|piątek|piatek|sobota|niedziela)\b/);
+    if(m&&l.length<40){anyDay=true;out.push(toEnDay(m[1]));}
+  });
+  if(anyDay)return out.join('\n');
+  var res=[];for(var d=0;d<days&&d*per<items.length;d++){res.push(DAYN[d][0].toUpperCase()+DAYN[d].slice(1));res=res.concat(items.slice(d*per,d===days-1?items.length:(d+1)*per));}
+  return res.join('\n');
+}
 SD['ts-ai']=function(){
   var e=S.sedit;S.saiBusy=true;S.saiErr='';render();
   aiCall({action:'week',topic:e.ai.topic,words:e.ai.words,days:e.ai.days,per_day:e.ai.per_day,level:e.ai.level},true).then(function(r){
-    var lines=String(r&&r.lines||'').trim();if(!parseWeek(lines).days.length)throw {code:'ai_bad_output'};
+    var lines=cleanAiWeek(r&&r.lines,e.ai.days,e.ai.per_day);if(!parseWeek(lines).days.length)throw {code:'ai_bad_output'};
     e.text=e.text.trim()?e.text.replace(/\s+$/,'')+'\n\n'+lines:lines;S.saiBusy=false;render();
     var ta=document.getElementById('se-text');if(ta)ta.scrollIntoView({block:'center'});
   }).catch(function(er){S.saiBusy=false;S.saiErr=errText(er);render();});
@@ -1090,7 +1112,7 @@ app.addEventListener('submit',function(ev){ev.preventDefault();if(ev.target.id==
 app.addEventListener('click',function(ev){
   var b=ev.target.closest('[data-a]');if(!b||b.disabled)return;
   var a=b.getAttribute('data-a'), id=b.getAttribute('data-id');
-  if(a==='sheetbg'){if(ev.target===b){S.sheet=null;S.delAtt=null;render();}return;}
+  if(a==='sheetbg'){if(ev.target===b){S.sheet=null;S.delAtt=null;S.sheetStudent=null;render();}return;}
   switch(a){
     case 'brand':if(isTeacherRoute()){S.edit=null;S.sheet=null;render();}else if(ls('zad-student'))goHome();break;
     case 'home':goHome();break;
@@ -1112,10 +1134,11 @@ app.addEventListener('click',function(ev){
     case 'warn0':S.warn=false;render();break;
     case 'tab':S.tab=b.getAttribute('data-v');ls('zad-tab',S.tab);S.edit=null;S.sedit=null;S.sov=null;S.flash='';loadTab();break;
     case 'tattempt':openAttempt(id);break;
-    case 'sheetclose':S.sheet=null;S.delAtt=null;render();break;
+    case 'sheetclose':S.sheet=null;S.delAtt=null;S.sheetStudent=null;render();break;
     case 'delatt':S.delAtt=id;openAttempt(id);break;
     case 'delatt0':S.delAtt=null;openAttempt(S.sheetAttempt.attempt_id);break;
-    case 'delatt2':trpc('t_delete_attempt',{p_attempt_id:id}).then(function(){S.sheet=null;S.delAtt=null;loadTab();}).catch(function(e){S.err=errText(e);S.sheet=null;render();});break;
+    case 'delatt2':b.disabled=true;trpc('t_delete_attempt',{p_attempt_id:id}).then(function(){var st=S.sheetStudent;S.sheet=null;S.delAtt=null;S.results=null;
+      if(st)openStudentDetail(st);loadTab();}).catch(function(e){S.err=errText(e);S.sheet=null;S.delAtt=null;render();});break;
     case 'wopen':S.wopen=S.wopen===id?null:id;render();break;
     case 'newquiz':S.edit=newEditor(null);S.saveErr='';render();window.scrollTo(0,0);break;
     case 'editquiz':S.edit=newEditor((S.quizzes||[]).filter(function(q){return q.id===id;})[0]);S.saveErr='';render();window.scrollTo(0,0);break;

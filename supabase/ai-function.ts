@@ -180,9 +180,11 @@ async function generateWeek(g: any) {
     `\nFormat: a line with the day name (${names.join(", ")}), then one line per item:\n` +
     `phrase | type | short English definition | Polish equivalent | one natural model sentence of 12-15 words with a concrete detail\n` +
     `Example:\nMonday\nrun out of | phrasal verb | to have none left of something | skończyć się, wyczerpać zapasy | We ran out of milk, so I had to run to the shop before breakfast.\n` +
-    `No numbering, headings or comments.`;
+    `Plain text only: no Markdown, no tables, no bold, no numbering, no headings, no comments.`;
   const text = await claude(system, user, 4000);
-  return text.split(/\r?\n/).map((l) => l.trim()).filter((l) => l && (l.includes("|") || /^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i.test(l)))
+  // Linie z „|” to wyrażenia; krótkie linie z nazwą dnia (też „**Monday**”, „Day 1 – Monday”) zostają, resztę porządkuje aplikacja.
+  return text.split(/\r?\n/).map((l) => l.trim()).filter((l) => l && (l.includes("|") ||
+    (l.length < 40 && /\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i.test(l))))
     .join("\n");
 }
 
