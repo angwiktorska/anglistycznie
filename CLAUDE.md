@@ -38,6 +38,7 @@ Wersja `index.html` w repozytorium (tytuł „Anglistycznie Premium”) jest źr
   - Uczeń: login i 4-cyfrowy PIN (`student_login` zwraca token sesji z `student_sessions`, ważny 60 dni). Funkcje ucznia biorą `p_token` i wołają `_sid()`. Po 8 złych PIN-ach blokada na 15 minut. PIN jest zapisany jako hash (`pin_hash`) i jako jawny `pin`, który widzi tylko nauczyciel.
   - Funkcje tylko dla `service_role` (woła je funkcja AI): `practice_store`, `sent_store`.
 - Główne tabele: `teachers`, `students`, `student_sessions`, `quizzes`, `attempts`, `word_stats` (to_repeat: błąd +1, poprawna odpowiedź −1), `practices`, `sentence_weeks`, `sentence_attempts`, `sentence_progress`.
+- `quizzes.class_name` i `sentence_weeks.class_name` to lista klas oddzielona przecinkami (`''` = wszystkie). Dopasowanie robi `_cls_ok(lista, klasa_ucznia)`, a w aplikacji `clsList`/`clsOk`/`clsPicker` (pola wyboru klas). Nazwa klasy ucznia nie może zawierać przecinka.
 - Ocena kartkówki odbywa się po stronie serwera (`_check`, `_norm`: wielkość liter, interpunkcja, `don't` = `do not`; przy słówkach `to`, `a`, `the` są opcjonalne). Odpowiedzi nigdy nie trafiają do przeglądarki przed oddaniem.
 
 ## Funkcja AI (`supabase/ai-function.ts`)

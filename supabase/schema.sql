@@ -183,6 +183,13 @@ returns boolean language sql immutable as $$
                  where public._norm(a, it->>'type') = public._norm(given, it->>'type'))
 $$;
 
+-- Lista klas oddzielona przecinkami ('' = wszystkie). Czy klasa ucznia jest na liście?
+create or replace function public._cls_ok(p_list text, p_cls text)
+returns boolean language sql immutable set search_path = public as $$
+  select coalesce(btrim(p_list), '') = ''
+      or btrim(coalesce(p_cls, '')) = any (select btrim(x) from unnest(string_to_array(p_list, ',')) x where btrim(x) <> '');
+$$;
+
 create or replace function public._sid(p_token uuid)
 returns uuid language plpgsql security definer set search_path = public as $$
 declare sid uuid;
@@ -290,7 +297,7 @@ begin
                   from attempts a where a.quiz_id = q.id and a.student_id = sid and a.finished_at is not null
                   order by a.finished_at desc limit 1) as last
         from quizzes q
-        where q.is_open and (q.class_name = '' or q.class_name = st.class_name)) x), '[]'),
+        where q.is_open and public._cls_ok(q.class_name, st.class_name)) x), '[]'),
     'review', coalesce((
       select json_agg(json_build_object('type', w.item->>'type', 'prompt', w.item->>'prompt',
                                         'answer', w.item->'answers'->>0, 'to_repeat', w.to_repeat, 'errors', w.errors)
@@ -312,7 +319,7 @@ declare sid uuid := public._sid(p_token); st students; q quizzes; a attempts; ba
 begin
   select * into st from students where id = sid;
   select * into q from quizzes
-   where id = p_quiz_id and is_open and (class_name = '' or class_name = st.class_name);
+   where id = p_quiz_id and is_open and public._cls_ok(class_name, st.class_name);
   if not found then raise exception 'quiz_unavailable'; end if;
 
   select * into a from attempts
@@ -714,7 +721,7 @@ returns public.sentence_weeks language plpgsql stable security definer set searc
 declare w sentence_weeks; cls text;
 begin
   select class_name into cls from students where id = p_sid;
-  select * into w from sentence_weeks where id = p_week_id and is_open and (class_name = '' or class_name = cls);
+  select * into w from sentence_weeks where id = p_week_id and is_open and public._cls_ok(class_name, cls);
   if not found then raise exception 'week_unavailable'; end if;
   return w;
 end $$;
@@ -737,7 +744,7 @@ begin
       (select count(*) from jsonb_array_elements(w.days) d, jsonb_array_elements(d->'items') it)::int as items,
       (select count(*) from sentence_progress p where p.week_id = w.id and p.student_id = sid and p.done)::int as done
     from sentence_weeks w
-    where w.is_open and (w.class_name = '' or w.class_name = cls)) x), '[]');
+    where w.is_open and public._cls_ok(w.class_name, cls)) x), '[]');
 end $$;
 
 create or replace function public.sent_week(p_token uuid, p_week_id uuid)
@@ -864,7 +871,7 @@ begin
   return json_build_object(
     'week', row_to_json(w),
     'students', coalesce((select json_agg(json_build_object('id', s.id, 'full_name', s.full_name, 'class_name', s.class_name) order by s.full_name)
-                 from students s where w.class_name = '' or s.class_name = w.class_name
+                 from students s where public._cls_ok(w.class_name, s.class_name)
                     or exists (select 1 from sentence_attempts a where a.week_id = w.id and a.student_id = s.id)), '[]'),
     'attempts', coalesce((select json_agg(json_build_object('student_id', a.student_id, 'd', a.day_index, 'i', a.item_index,
                  'phrase', a.phrase, 'attempt_no', a.attempt_no, 'sentence', a.sentence, 'verdict', a.verdict, 'corrected', a.corrected,
@@ -881,7 +888,7 @@ end $$;
 do $$
 declare f text;
 begin
-  foreach f in array array['_norm(text,text)', '_item_key(jsonb)', '_check(jsonb,text)', '_sid(uuid)',
+  foreach f in array array['_norm(text,text)', '_cls_ok(text,text)', '_item_key(jsonb)', '_check(jsonb,text)', '_sid(uuid)',
                            '_need_teacher()', '_attempt_json(uuid)', '_make_login(text)', '_new_pin()',
                            '_practice_view(uuid,boolean)', 'practice_store(uuid,jsonb)',
                            '_sent_week(uuid,uuid)', '_sent_item(sentence_weeks,int,int)',
