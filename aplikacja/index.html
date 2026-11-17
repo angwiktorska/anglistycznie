@@ -583,6 +583,17 @@ function loadTab(){
   else p=trpc('t_students').then(function(r){S.students=r;});
   p.then(function(){S.loading=false;render();}).catch(function(e){S.loading=false;S.err=errText(e);if(S.v==='teacher')render();});
 }
+/* Kartkówka / tydzień może być dla kilku klas: class_name = 'A, B' ('' = wszystkie). */
+function clsList(s){return String(s||'').split(',').map(function(x){return x.trim();}).filter(Boolean);}
+function clsOk(list,c){var l=clsList(list);return !l.length||l.indexOf(String(c||'').trim())>=0;}
+function clsLabel(list){var l=clsList(list);return !l.length?'wszystkich klas':(l.length>1?'klas: ':'klasy ')+l.join(', ');}
+function clsPicker(g,list){
+  var sel=clsList(list),all=classes().slice();sel.forEach(function(c){if(all.indexOf(c)<0)all.push(c);});
+  return '<div class="f" style="grid-column:1/-1;display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:700;color:var(--muted)">Dla klas'+
+    '<div class="row" style="gap:8px 18px;flex-wrap:wrap"><label class="check"><input type="checkbox" data-cg="'+g+'" data-cls=""'+(sel.length?'':' checked')+'> Wszystkie klasy</label>'+
+    all.map(function(c){return '<label class="check"><input type="checkbox" data-cg="'+g+'" data-cls="'+esc(c)+'"'+(sel.indexOf(c)>=0?' checked':'')+'> '+esc(c)+'</label>';}).join('')+'</div>'+
+    '<span class="meta" style="font-weight:400">'+(all.length?'Zaznacz jedną albo kilka klas. Klasy bierzemy z zakładki Uczniowie.':'Nie ma jeszcze klas. Dodaj uczniów z klasą w zakładce Uczniowie.')+'</span></div>';
+}
 function classes(){var m={};(S.students||[]).forEach(function(s){if(s.class_name)m[s.class_name]=1;});return Object.keys(m).sort();}
 function classSelect(id,cur,allLabel){return '<select class="inp" id="'+id+'"><option value="">'+(allLabel||'Wszystkie klasy')+'</option>'+classes().map(function(c){return '<option'+(c===cur?' selected':'')+'>'+esc(c)+'</option>';}).join('')+'</select>';}
 
@@ -596,7 +607,7 @@ function tResults(){
     var sum=0,ex=0,ext=0;list.forEach(function(r){sum+=pct(r.base_score,r.base_total);ex+=r.extra_score||0;ext+=r.extra_total||0;});
     var avg=Math.round(sum/list.length);
     var who={};list.forEach(function(r){who[r.student_id]=1;});
-    var expected=fq?(S.students||[]).filter(function(s){var q=(S.quizzes||[]).filter(function(x){return x.id===fq;})[0];return (!fc||s.class_name===fc)&&(!q||!q.class_name||q.class_name===s.class_name);}).length:0;
+    var expected=fq?(S.students||[]).filter(function(s){var q=(S.quizzes||[]).filter(function(x){return x.id===fq;})[0];return (!fc||s.class_name===fc)&&(!q||clsOk(q.class_name,s.class_name));}).length:0;
     out+='<div class="stats"><div class="stat"><b>'+list.length+'</b><span>'+pl(list.length,'napisana kartkówka','napisane kartkówki','napisanych kartkówek')+'</span></div><div class="stat"><b>'+avg+'%</b><span>średni wynik</span></div><div class="stat"><b class="gr" style="font-size:38px;color:var(--bad)">'+grade(avg)[0]+'</b><span>średnia ocena</span></div>'+
       (ext?'<div class="stat"><b>'+pct(ex,ext)+'%</b><span>poprawnych powtórek</span></div>':'')+
       (fq&&expected?'<div class="stat"><b>'+Object.keys(who).length+'/'+expected+'</b><span>uczniów napisało</span></div>':'')+'</div>';
@@ -697,7 +708,7 @@ function tEditor(){
   var e=S.edit, p=parseLines(e.text,e.enFirst);
   var out='<div><button class="btn ghost" data-a="cancelquiz" style="padding-left:0">← Wróć bez zapisywania</button></div><h1>'+(e.id?'Edytuj kartkówkę':'Nowa <span class="mark">kartkówka</span>')+'</h1>';
   out+='<section class="card"><div class="grid2"><label class="f" style="grid-column:1/-1">Tytuł (widzą go uczniowie)<input class="inp" id="e-title" data-e="title" value="'+esc(e.title)+'" placeholder="np. Unit 3 – jedzenie i Present Simple"></label>'+
-   '<label class="f">Dla klasy<input class="inp" id="e-class" data-e="class_name" list="dl-classes" value="'+esc(e.class_name)+'" placeholder="puste = wszystkie klasy"><datalist id="dl-classes">'+classes().map(function(c){return '<option value="'+esc(c)+'">';}).join('')+'</datalist></label>'+
+   clsPicker('e',e.class_name)+
    '<label class="f">Powtórek na ucznia<input class="inp" type="number" min="0" max="20" id="e-extra" data-e="extra_count" value="'+esc(e.extra_count)+'"><span class="meta" style="font-weight:400">Ile słówek z jego wcześniejszych błędów dodać</span></label></div>'+
    '<div class="row"><label class="check"><input type="checkbox" id="e-open" data-e="is_open"'+(e.is_open?' checked':'')+'> Otwarta – uczniowie widzą ją od razu</label><label class="check"><input type="checkbox" id="e-retake" data-e="allow_retake"'+(e.allow_retake?' checked':'')+'> Można pisać kilka razy</label></div></section>';
   out+='<section class="card"><div class="row"><h2>Przygotuj zadania z AI</h2><span class="spacer"></span><button class="btn sm ghost" data-a="toggleai">'+(e.showAi?'Ukryj':'Pokaż')+'</button></div>';
@@ -752,7 +763,7 @@ function saveQuiz(){
   if(!p.items.length){S.saveErr='Dodaj co najmniej jedno zadanie.';render();return;}
   S.saving=true;S.saveErr='';render();
   trpc('t_save_quiz',{p_id:e.id,p_title:e.title,p_class_name:e.class_name,p_items:p.items,p_extra_count:parseInt(e.extra_count,10)||0,p_is_open:e.is_open,p_allow_retake:e.allow_retake}).then(function(){
-    S.saving=false;S.edit=null;S.flash=(e.id?'Zapisano zmiany w kartkówce „'+e.title+'”.':'Wysłano! Kartkówka „'+e.title+'” jest dostępna dla '+(e.class_name.trim()?'klasy '+e.class_name.trim():'wszystkich klas')+'.')+(e.is_open?'':' (Jest zamknięta – uczniowie zobaczą ją, gdy ją otworzysz.)');loadTab();
+    S.saving=false;S.edit=null;S.flash=(e.id?'Zapisano zmiany w kartkówce „'+e.title+'”.':'Wysłano! Kartkówka „'+e.title+'” jest dostępna dla '+clsLabel(e.class_name)+'.')+(e.is_open?'':' (Jest zamknięta – uczniowie zobaczą ją, gdy ją otworzysz.)');loadTab();
   }).catch(function(er){S.saving=false;S.saveErr=errText(er);render();});
 }
 
@@ -964,7 +975,7 @@ function tSentEditor(){
   var o='<div><button class="btn ghost" data-a="ts-back" style="padding-left:0">← Wróć bez zapisywania</button></div><h1>'+(e.id?'Edytuj tydzień':'Nowy <span class="mark">tydzień</span>')+'</h1>';
   o+='<section class="card"><div class="grid2"><label class="f">Poniedziałek tygodnia<input class="inp" type="date" id="se-week" data-se="week_start" value="'+esc(e.week_start)+'"></label>'+
      '<label class="f">Tytuł (opcjonalnie)<input class="inp" id="se-title" data-se="title" value="'+esc(e.title)+'" placeholder="np. Week 3 – phrasal verbs"></label>'+
-     '<label class="f">Dla klasy / ucznia<input class="inp" id="se-class" data-se="class_name" list="dl-classes-s" value="'+esc(e.class_name)+'" placeholder="np. FCE Gabi (puste = wszyscy)"><datalist id="dl-classes-s">'+classes().map(function(c){return '<option value="'+esc(c)+'">';}).join('')+'</datalist><span class="meta" style="font-weight:400">Ta sama „klasa” co w zakładce Uczniowie</span></label></div>'+
+     clsPicker('se',e.class_name)+'</div>'+
      '<label class="check"><input type="checkbox" id="se-open" data-se="is_open"'+(e.is_open?' checked':'')+'> Otwarty – uczeń widzi go od razu (każdy dzień odblokowuje się w swoim dniu)</label></section>';
   o+='<section class="card"><div class="row"><h2>Wygeneruj z AI</h2><span class="spacer"></span><button class="btn sm ghost" data-a="ts-toggleai">'+(e.showAi?'Ukryj':'Pokaż')+'</button></div>';
   if(e.showAi){
@@ -1102,7 +1113,7 @@ SD['ts-save']=function(){
   if(!p.days.length){S.ssaveErr='Dodaj co najmniej jeden dzień z wyrażeniami.';render();return;}
   S.ssaving=true;S.ssaveErr='';render();
   trpc('t_sent_save',{p_id:e.id,p_week_start:e.week_start,p_title:e.title,p_class_name:e.class_name,p_days:p.days,p_is_open:e.is_open}).then(function(){
-    S.ssaving=false;S.sedit=null;S.flash=e.id?'Zapisano zmiany.':'Wysłano! Tydzień jest dostępny dla: '+(e.class_name.trim()||'wszystkich uczniów')+'.';loadTab();
+    S.ssaving=false;S.sedit=null;S.flash=e.id?'Zapisano zmiany.':'Wysłano! Tydzień jest dostępny dla '+clsLabel(e.class_name)+'.';loadTab();
   }).catch(function(er){S.ssaving=false;S.ssaveErr=errText(er);render();});
 };
 app.addEventListener('click',function(ev){var b=ev.target.closest('[data-a]');if(!b||b.disabled)return;var a=b.getAttribute('data-a');if(SD[a])SD[a](b,b.getAttribute('data-id'));});
@@ -1116,6 +1127,9 @@ app.addEventListener('input',function(ev){
 });
 app.addEventListener('change',function(ev){
   var t=ev.target;
+  if(t.dataset.cg){var ed=t.dataset.cg==='se'?S.sedit:S.edit;if(!ed)return;var c=t.getAttribute('data-cls'),l=clsList(ed.class_name);
+    if(c==='')l=[];else{l=l.filter(function(x){return x!==c;});if(t.checked)l.push(c);}
+    ed.class_name=l.join(', ');render();return;}
   if(S.sedit&&t.dataset.se&&t.type==='checkbox'){S.sedit[t.dataset.se]=t.checked;return;}
   if(t.id==='ts-student'){S.sovStudent=t.value;render();}
 });
@@ -1165,7 +1179,7 @@ app.addEventListener('click',function(ev){
     case 'delq0':S.delQ=null;render();break;
     case 'delq2':S.delQ=null;trpc('t_delete_quiz',{p_id:id}).then(loadTab).catch(function(e){S.err=errText(e);render();});break;
     case 'addstudents':
-      var cls=document.getElementById('ns-class').value.trim(), names=document.getElementById('ns-names').value.split(/\r?\n/).map(function(s){return s.replace(/\s+/g,' ').trim();}).filter(Boolean);
+      var cls=document.getElementById('ns-class').value.replace(/,/g,' ').replace(/\s+/g,' ').trim(), names=document.getElementById('ns-names').value.split(/\r?\n/).map(function(s){return s.replace(/\s+/g,' ').trim();}).filter(Boolean);
       S.nsClass=cls;S.nsNames=document.getElementById('ns-names').value;
       if(!names.length){S.err='Wpisz co najmniej jedno imię i nazwisko.';render();break;}
       S.adding=true;S.err='';render();
@@ -1186,7 +1200,7 @@ app.addEventListener('click',function(ev){
       S.err=missing?missing+' '+pl(missing,'uczeń nie ma','uczniów nie ma','uczniów nie ma')+' zapisanego PIN-u (konta sprzed aktualizacji) – kliknij przy nich „Nowy PIN”.':'';render();var pa=app.querySelector('.printable');if(pa)pa.scrollIntoView({block:'start'});break;
     case 'editst':S.editSt=id;render();break;
     case 'editst0':S.editSt=null;render();break;
-    case 'savest':trpc('t_update_student',{p_student_id:id,p_full_name:document.getElementById('es-name').value,p_class_name:document.getElementById('es-class').value}).then(function(){S.editSt=null;return trpc('t_students');}).then(function(r){S.students=r;render();}).catch(function(e){S.err=errText(e);render();});break;
+    case 'savest':trpc('t_update_student',{p_student_id:id,p_full_name:document.getElementById('es-name').value,p_class_name:document.getElementById('es-class').value.replace(/,/g,' ').replace(/\s+/g,' ').trim()}).then(function(){S.editSt=null;return trpc('t_students');}).then(function(r){S.students=r;render();}).catch(function(e){S.err=errText(e);render();});break;
     case 'delst':S.delSt=id;render();break;
     case 'delst0':S.delSt=null;render();break;
     case 'delst2':S.delSt=null;trpc('t_delete_student',{p_student_id:id}).then(loadTab).catch(function(e){S.err=errText(e);render();});break;
