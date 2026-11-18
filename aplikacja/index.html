@@ -331,9 +331,9 @@ function qrSvg(text){try{if(!window.qrcode)return '';var q=qrcode(0,'M');q.addDa
 function qrOverlay(){
   var svg=qrSvg(S.qr.url);
   return '<div class="qrov" role="dialog" aria-modal="true" aria-label="Kod QR"><div class="top"><button class="btn" data-a="qrfull">Pełny ekran</button><button class="btn" data-a="qrclose">Zamknij ✕</button></div>'+
-    '<h1>'+esc(S.qr.title)+'</h1><p class="lead">Zeskanuj aparatem w telefonie'+(S.qr.quiz?', zaloguj się i kartkówka otworzy się sama.':' i zaloguj się swoim loginem i PIN-em.')+'</p>'+
+    '<h1>'+esc(S.qr.title)+'</h1><p class="lead">Zeskanuj aparatem w telefonie'+(S.qr.quiz?', zaloguj się i kartkówka otworzy się sama.':S.qr.week?' albo otwórz link, zaloguj się i tydzień Daily Sentences otworzy się sam.':' i zaloguj się swoim loginem i PIN-em.')+'</p>'+
     (svg?'<div class="qr">'+svg+'</div>':'<p class="msg err">Nie udało się wygenerować kodu (brak internetu?). Podaj uczniom adres poniżej.</p>')+
-    '<p class="url">'+esc(S.qr.url)+'</p></div>';
+    '<p class="url">'+esc(S.qr.url)+'</p><div><button class="btn primary" data-a="qrcopy">Kopiuj link</button></div></div>';
 }
 
 /* ---------------- routing ---------------- */
@@ -348,6 +348,8 @@ function boot(){
   } else {
     var dl=/^#kartkowka-([0-9a-f-]{36})$/i.exec(location.hash);
     if(dl){ls('zad-goto',dl[1]);history.replaceState(null,'',location.pathname+location.search);}
+    var dw=/^#tydzien-([0-9a-f-]{36})$/i.exec(location.hash);
+    if(dw){ls('zad-goto-week',dw[1]);history.replaceState(null,'',location.pathname+location.search);}
     var st=ls('zad-student');
     if(!st){S={v:'slogin'};render();return;}
     goHome();
@@ -386,7 +388,7 @@ function renderSetup(){
 
 /* ================= STUDENT ================= */
 function vStudentLogin(){
-  return '<main class="in"><form class="login card" id="slf" autocomplete="off"><h1>Cześć! <span class="mark">Zaloguj się</span></h1><p class="meta">'+(ls('zad-goto')?'Po zalogowaniu od razu otworzy się kartkówka.':'Login i PIN dostaniesz od nauczyciela.')+'</p>'+
+  return '<main class="in"><form class="login card" id="slf" autocomplete="off"><h1>Cześć! <span class="mark">Zaloguj się</span></h1><p class="meta">'+(ls('zad-goto')?'Po zalogowaniu od razu otworzy się kartkówka.':ls('zad-goto-week')?'Po zalogowaniu od razu otworzy się Twój tydzień Daily Sentences.':'Login i PIN dostaniesz od nauczyciela.')+'</p>'+
    '<label class="f">Login<input class="inp" id="sl-login" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="np. jan.kowalski" required></label>'+
    '<label class="f">PIN<input class="inp pin" id="sl-pin" inputmode="numeric" type="password" maxlength="8" placeholder="••••" required></label>'+
    (S.err?'<p class="msg err">'+S.err+'</p>':'')+
@@ -406,7 +408,8 @@ function sTok(){var s=ls('zad-student');return s&&s.token;}
 function sCall(fn,args){args=args||{};args.p_token=sTok();return rpc(fn,args).catch(function(e){if(/session_expired/.test(e.code)){ls('zad-student',null);S={v:'slogin',err:ERR.session_expired};render();}throw e;});}
 function goHome(){
   S={v:'loading'};render();
-  Promise.all([sCall('student_home'),sCall('sent_list').catch(function(){return [];})]).then(function(r){var h=r[0];h.sent=r[1]||[];var g=ls('zad-goto');if(g){ls('zad-goto',null);if(h.quizzes.some(function(q){return q.id===g;})){startQuiz(g);return;}}S={v:'shome',home:h};render();window.scrollTo(0,0);}).catch(function(e){if(S.v!=='slogin'){S={v:'shome',err:errText(e)};render();}});
+  Promise.all([sCall('student_home'),sCall('sent_list').catch(function(){return [];})]).then(function(r){var h=r[0];h.sent=r[1]||[];var g=ls('zad-goto');if(g){ls('zad-goto',null);if(h.quizzes.some(function(q){return q.id===g;})){startQuiz(g);return;}}
+    var gw=ls('zad-goto-week');if(gw){ls('zad-goto-week',null);if(h.sent.some(function(w){return w.id===gw;})){openWeek(gw);return;}}S={v:'shome',home:h};render();window.scrollTo(0,0);}).catch(function(e){if(S.v!=='slogin'){S={v:'shome',err:errText(e)};render();}});
 }
 function vStudentHome(){
   if(S.err&&!S.home)return '<main class="in"><p class="msg err">'+S.err+'</p><div><button class="btn" data-a="home">Spróbuj ponownie</button></div></main>';
@@ -961,7 +964,7 @@ function tSent(){
   o+='<div class="cards">';
   ws.forEach(function(w){
     o+='<article class="card"><div class="qcard"><div class="stack" style="gap:4px"><div class="row" style="gap:6px">'+(w.is_open?'<span class="chip ok">Otwarty</span>':'<span class="chip mute">Zamknięty</span>')+'<span class="chip">'+esc(w.class_name||'Wszyscy uczniowie')+'</span></div><h3>'+esc(w.title||('Tydzień '+weekRange(w.week_start)))+'</h3><p class="meta">'+weekRange(w.week_start)+' · '+w.days.length+' '+pl(w.days.length,'dzień','dni','dni')+' · '+w.items+' wyrażeń · pisze: '+w.students_active+'</p></div>'+
-      '<div class="row" style="gap:4px"><button class="btn sm primary" data-a="ts-open" data-id="'+w.id+'">Odpowiedzi ucznia</button><button class="btn sm" data-a="ts-edit" data-id="'+w.id+'">Edytuj</button>'+
+      '<div class="row" style="gap:4px"><button class="btn sm primary" data-a="ts-open" data-id="'+w.id+'">Odpowiedzi ucznia</button><button class="btn sm" data-a="qrweek" data-id="'+w.id+'">Link i QR</button><button class="btn sm" data-a="ts-edit" data-id="'+w.id+'">Edytuj</button>'+
       (S.sdel===w.id?'<button class="btn sm danger" data-a="ts-del2" data-id="'+w.id+'">Usunąć z odpowiedziami?</button><button class="btn sm ghost" data-a="ts-del0">Anuluj</button>':'<button class="btn sm ghost danger" data-a="ts-del" data-id="'+w.id+'">Usuń</button>')+'</div></div></article>';
   });
   return o+'</div>';
@@ -1113,7 +1116,7 @@ SD['ts-save']=function(){
   if(!p.days.length){S.ssaveErr='Dodaj co najmniej jeden dzień z wyrażeniami.';render();return;}
   S.ssaving=true;S.ssaveErr='';render();
   trpc('t_sent_save',{p_id:e.id,p_week_start:e.week_start,p_title:e.title,p_class_name:e.class_name,p_days:p.days,p_is_open:e.is_open}).then(function(){
-    S.ssaving=false;S.sedit=null;S.flash=e.id?'Zapisano zmiany.':'Wysłano! Tydzień jest dostępny dla '+clsLabel(e.class_name)+'.';loadTab();
+    S.ssaving=false;S.sedit=null;S.flash=e.id?'Zapisano zmiany.':'Wysłano! Tydzień jest dostępny dla '+clsLabel(e.class_name)+'. Uczniowie zobaczą go po zalogowaniu, a link do udostępnienia znajdziesz pod przyciskiem „Link i QR”.';loadTab();
   }).catch(function(er){S.ssaving=false;S.ssaveErr=errText(er);render();});
 };
 app.addEventListener('click',function(ev){var b=ev.target.closest('[data-a]');if(!b||b.disabled)return;var a=b.getAttribute('data-a');if(SD[a])SD[a](b,b.getAttribute('data-id'));});
@@ -1152,6 +1155,8 @@ app.addEventListener('click',function(ev){
     case 'aigen':generateQuizAI();break;
     case 'qrapp':S.qr={title:'Zadanko English – logowanie',url:appUrl()};render();break;
     case 'qrquiz':var qq=(S.quizzes||[]).filter(function(x){return x.id===id;})[0];S.qr={title:qq?qq.title:'Kartkówka',url:appUrl()+'#kartkowka-'+id,quiz:true};render();break;
+    case 'qrweek':var qw=(S.sweeks||[]).filter(function(x){return x.id===id;})[0];S.qr={title:qw&&qw.title?qw.title:'Daily Sentences',url:appUrl()+'#tydzien-'+id,week:true};render();break;
+    case 'qrcopy':copyText(S.qr.url,b);break;
     case 'qrclose':S.qr=null;try{if(document.fullscreenElement)document.exitFullscreen();}catch(e){}render();break;
     case 'qrfull':try{var el=document.querySelector('.qrov');if(el&&el.requestFullscreen)el.requestFullscreen().catch(function(){});}catch(e){}break;
     case 'sattempt':S={v:'loading'};render();sCall('student_attempt',{p_attempt_id:id}).then(function(r){S={v:'result',att:r};render();window.scrollTo(0,0);}).catch(function(){goHome();});break;
